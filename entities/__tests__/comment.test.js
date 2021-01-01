@@ -37,10 +37,23 @@ test.each( validComments )(
     expect( comment.userCommentNumber ).toEqual( userCommentNumber )
     expect( comment.userName ).toEqual( userName )
     expect( comment.slug ).toEqual( slug )
-    expect( comment.text ).toEqual( text ),
-    expect( comment.vote ).toEqual( 0 ),
-    expect( comment.numberVotes ).toEqual( 0 ),
+    expect( comment.text ).toEqual( text )
+    expect( comment.vote ).toEqual( 0 )
+    expect( comment.numberVotes ).toEqual( 0 )
     expect( comment.dateAdded ).toEqual( dateAdded )
+  }
+)
+
+test( `comment valid constructor`, 
+  () => {
+    const comment = new Comment( { userNumber, userCommentNumber, userName, slug, text } ) 
+    expect( comment.userNumber ).toEqual( userNumber )
+    expect( comment.userCommentNumber ).toEqual( userCommentNumber )
+    expect( comment.userName ).toEqual( userName )
+    expect( comment.slug ).toEqual( slug )
+    expect( comment.text ).toEqual( text )
+    expect( comment.vote ).toEqual( 0 )
+    expect( comment.numberVotes ).toEqual( 0 )
   }
 )
 
