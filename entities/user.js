@@ -1,4 +1,4 @@
-const { ZeroPadNumber } = require( `./utils` )
+const { ZeroPadNumber, parseDate } = require( `./utils` )
 /**
  * User library
  */
@@ -10,20 +10,40 @@ class User {
    * @param {Number|String} [options.userNumber=`0`] The number of the user.
    */
   constructor( {
-    name, email, userNumber = `0`, dateJoined = new Date(), numberTOS = `0`,
+    name, email, userNumber = `0`, dateJoined = new Date(),
     numberFollows = `0`, numberComments = `0`, numberVotes = `0`,
     totalKarma = `0`
   } ) {
-    if ( !name ) throw Error( `Must give the user's name` )
+    if ( typeof name == `undefined` ) throw Error( `Must give the user's name` )
     this.name = name
-    if ( !email ) throw Error( `Must give the user's email` )
+    if ( typeof email === `undefined` ) 
+      throw Error( `Must give the user's email` )
     this.email = email
+    if ( isNaN( userNumber ) )
+      throw new Error( `User number must be a number` )
+    if ( parseInt( userNumber ) < 0 )
+      throw new Error( `User number must be positive` )
     this.userNumber = parseInt( userNumber )
-    this.dateJoined = dateJoined
-    this.numberTOS = parseInt( numberTOS )
+    this.dateJoined = (
+      ( typeof dateJoined == `string` ) ? parseDate( dateJoined ): dateJoined
+    )
+    if ( isNaN( numberFollows ) )
+      throw new Error( `User number of follows must be a number` )
+    if ( parseInt( numberFollows ) < 0 )
+      throw new Error( `User number of follower must be positive` )
     this.numberFollows = parseInt( numberFollows )
+    if ( isNaN( numberComments ) )
+      throw new Error( `User number of comments must be a number` )
+    if ( parseInt( numberComments ) < 0 )
+      throw new Error( `User number of comments must be positive` )
     this.numberComments = parseInt( numberComments )
+    if ( isNaN( numberVotes ) )
+      throw new Error( `User number of votes must be a number` )
+    if ( parseInt( numberVotes ) < 0 )
+      throw new Error( `User number of votes must be positive` )
     this.numberVotes = parseInt( numberVotes )
+    if ( isNaN( totalKarma ) ) 
+      throw new Error( `User's karma must be a number` )
     this.totalKarma = parseInt( totalKarma )
   }
 
@@ -54,7 +74,6 @@ class User {
       'Name': { 'S': this.name },
       'Email': { 'S': this.email },
       'DateJoined': { 'S': this.dateJoined.toISOString() },
-      'NumberTOS': { 'N': this.numberTOS.toString() },
       'NumberFollows': { 'N': this.numberFollows.toString() },
       'NumberComments': { 'N': this.numberComments.toString() },
       'NumberVotes': { 'N': this.numberVotes.toString() },
@@ -74,7 +93,6 @@ const userFromItem = ( item ) => {
     email: item.Email.S,
     userNumber: item.PK.S.split( `#` )[1],
     dateJoined: item.DateJoined.S,
-    numberTOS: item.NumberTOS.N,
     numberComments: item.NumberComments.N,
     numberVotes: item.NumberVotes.N,
     totalKarma: item.TotalKarma.N
