@@ -5,27 +5,40 @@ class Vote {
     dateAdded = new Date(), replyChain = []
   } ) {
     if ( typeof userNumber === `undefined` )
-      throw Error( `Must give the vote owner's number` )
+      throw new Error( `Must give the vote owner's number` )
+    if ( isNaN( userNumber ) )
+      throw new Error( `User's number must be a number` )
+    if ( parseInt( userNumber ) < 0 )
+      throw new Error( `User's number must be positive` )
     this.userNumber = parseInt( userNumber )
     if ( typeof userName === `undefined` )
-      throw Error( `Must give the vote owner's name` )
+      throw new Error( `Must give the vote owner's name` )
     this.userName = userName
-    if ( typeof slug === `undefined` ) throw Error( `Must give post's slug` )
+    if ( typeof slug === `undefined` ) 
+      throw new Error( `Must give post's slug` )
     this.slug = slug
     if ( typeof voteNumber === `undefined` )
-      throw Error( `Must give the vote's number` )
+      throw new Error( `Must give the vote's number` )
+    if ( isNaN( voteNumber ) )
+      throw new Error( `Vote number must be a number` )
+    if ( parseInt( voteNumber ) < 0 )
+      throw new Error( `Vote number must be positive` )
     this.voteNumber = parseInt( voteNumber )
     if ( typeof up === `undefined` )
-      throw Error( `Must give whether the vote is and up-vote or a down-vote` )
+      throw new Error( 
+        `Must give whether the vote is and up-vote or a down-vote` 
+      )
     this.up = up
-    if ( typeof dateAdded === `undefined` )
-      throw Error( `Must give the date the vote was added` )
     this.dateAdded = ( typeof dateAdded === `string` ) ?
       parseDate( dateAdded ) : dateAdded
+    if ( !Array.isArray( replyChain ) )
+      throw new Error( `Chain of comments must be an array.` )
+    if ( replyChain.length < 1 )
+      throw new Error( `Vote requires a chain of comments` )
     this.replyChain = replyChain.map( ( date ) => {
       if ( typeof date == `string` ) return parseDate( date )
       else if ( date instanceof Date ) return dateAdded
-      else throw Error(
+      else throw new Error(
         `The chain of comments this replies to must be either strings or dates`
       )
     } )
@@ -35,9 +48,9 @@ class Vote {
    * @returns {Object} The partition key.
    */
   pk() {
-    return { 'PK': {
+    return {
       'S': `USER#${ ZeroPadNumber( this.userNumber ) }`
-    } }
+    }
   }
 
   /**
@@ -53,7 +66,7 @@ class Vote {
   /**
    * @returns {Object} The global secondary index partition key
    */
-  gsi1pk() { return { 'GSI1PK': { 'S': `POST#${ this.slug }` } } }
+  gsi1pk() { return {'S': `POST#${ this.slug }` } }
 
   /**
    * @returns {Object} The global secondary index primary key
