@@ -8,13 +8,15 @@ class Project {
     this.slug = slug
     if ( !title ) throw Error( `Must give title` )
     this.title = title
+    if ( parseInt( numberFollows ) < 0 ) 
+      throw new Error( `Number of follows must be positive` )
     this.numberFollows = parseInt( numberFollows )
   }
 
   /**
    * @returns {Object} The partition key.
    */
-  pk() { return { 'PK': { 'S': `#PROJECT` } } }
+  pk() { return { 'S': `#PROJECT` } }
 
   /**
    * @returns {Object} The primary key.
