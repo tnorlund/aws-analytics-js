@@ -1,33 +1,31 @@
-const { ZeroPadNumber } = require( `./utils` )
+const { ZeroPadNumber, parseDate } = require( `./utils` )
 class ProjectFollow {
   /**
    * A project's follow object.
    * @param {Object} details The details about the project's follow.
    */
   constructor( {
-    userName, userNumber, email, userFollowNumber, projectFollowNumber, slug,
-    title, dateFollowed = new Date()
+    userName, userNumber, email, slug, title, dateFollowed = new Date()
   } ) {
-    if ( typeof userName === undefined ) throw Error( `Must give user's name` )
+    if ( typeof userName === `undefined` ) 
+      throw Error( `Must give user's name` )
     this.userName = userName
-    if ( typeof userNumber === undefined )
+    if ( typeof userNumber === `undefined` )
       throw Error( `Must give the user's number` )
-    this.userNumber = userNumber
-    if ( typeof userFollowNumber === undefined )
-      throw Error( `Must give the number of projects the user follows` )
-    this.userFollowNumber = userFollowNumber
-    if ( typeof email === undefined )
+    this.userNumber = parseInt( userNumber )
+    if ( typeof email === `undefined` )
       throw Error( `Must give the user's email` )
     this.email = email
-    if ( typeof projectFollowNumber === undefined )
-      throw Error( `Must give the project's follow number` )
-    /** The number of current followers of this project + 1. */
-    this.projectFollowNumber = projectFollowNumber
-    if ( !slug ) throw Error( `Must give the project's slug` )
+    if ( typeof slug === `undefined` ) 
+      throw Error( `Must give the project's slug` )
     this.slug = slug
-    if ( !title ) throw Error( `Must give the project's title` )
+    if ( typeof title === `undefined` ) 
+      throw Error( `Must give the project's title` )
     this.title = title
-    this.dateFollowed = dateFollowed
+    this.dateFollowed = (
+      ( typeof dateFollowed == `string` ) ? parseDate( dateFollowed )
+        : dateFollowed
+    )
   }
 
   /**
@@ -91,8 +89,6 @@ const projectFollowFromItem = ( item ) => {
   return new ProjectFollow( {
     userName: item.UserName.S,
     userNumber: parseInt( item.PK.S.split( `#` )[1] ).toString(),
-    userFollowNumber: parseInt( item.SK.S.split( `#` )[2] ).toString(),
-    projectFollowNumber: parseInt( item.GSI1SK.S.split( `#` )[2] ).toString(),
     slug: item.GSI1PK.S.split( `#` )[1],
     email: item.Email.S,
     title: item.Title.S,
