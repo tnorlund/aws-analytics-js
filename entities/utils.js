@@ -4,6 +4,10 @@
  * @returns {String}      The zero-padded number as a string.
  */
 function ZeroPadNumber( number ) {
+  if ( isNaN( number ) )
+    throw new Error( `Must pass a number` )
+  if ( parseInt( number ) < 0 )
+    throw new Error( `Must pass a positive number` )
   return ( `00000` + number ).slice( -6 )
 }
 

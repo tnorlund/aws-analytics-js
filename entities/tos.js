@@ -51,7 +51,6 @@ class TOS {
  * @returns {Object}      The Terms of Service as a class.
  */
 const tosFromItem = ( item ) => {
-  console.log( `item`, item )
   return new TOS( {
     userNumber: item.PK.S.split( `#` )[1],
     version: parseDate( item.SK.S.split( `#` )[2] ),
