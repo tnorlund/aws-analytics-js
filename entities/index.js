@@ -6,6 +6,7 @@ const { ProjectFollow, projectFollowFromItem } = require( `./projectFollow` )
 const { Post, postFromItem } = require( `./post` )
 const { Comment, commentFromItem } = require( `./comment` )
 const { Vote, voteFromItem } = require( `./vote` )
+const { Visitor, visitorFromItem } = require( `./visitor` )
 
 module.exports = {
   Blog, blogFromItem,
@@ -15,5 +16,6 @@ module.exports = {
   ProjectFollow, projectFollowFromItem,
   Post, postFromItem,
   Comment, commentFromItem,
-  Vote, voteFromItem
+  Vote, voteFromItem,
+  Visitor, visitorFromItem
 }

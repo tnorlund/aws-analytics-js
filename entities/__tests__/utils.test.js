@@ -1,4 +1,4 @@
-const { ZeroPadNumber, parseDate } = require( `../utils` )
+const { ZeroPadNumber, parseDate, isIP } = require( `../utils` )
 
 describe( `utility functions`, () => {
   describe( `zeroPadNumber`, () => {
@@ -13,5 +13,11 @@ describe( `utility functions`, () => {
     const date = new Date()
     test( `valid parameter`, () => expect( parseDate( date.toISOString() ) ).toEqual( date ) )
     test( `invalid parameter`, () => expect( () => parseDate( `something` ) ).toThrow() )
+  } )
+
+  describe( `isIP`, () => {
+    test( `valid parameter`, () => expect( isIP( `0.0.0.0` ) ).toEqual( true ) )
+    test( `valid parameter`, () => expect( isIP( `something` ) ).toEqual( false ) )
+    test( `invalid parameter`, () => expect( () => isIP( {} ) ).toThrow() )
   } )
 } )

@@ -27,4 +27,10 @@ const parseDate = ( dateString ) => {
     throw new Error( `Date must be formatted with ISO format.` )
 }
 
-module.exports = { ZeroPadNumber, parseDate }
+const isIP = ( ip ) => {
+  if ( typeof ip !== `string` )
+    throw Error( `Must pass IP address as a string` )
+  return Boolean( ip.match( /\d+\.\d+\.\d+\.\d/ ) )
+}
+
+module.exports = { ZeroPadNumber, parseDate, isIP }
