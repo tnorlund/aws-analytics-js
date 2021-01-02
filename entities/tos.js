@@ -4,18 +4,23 @@ class TOS {
    * A Terms of Service object.
    * @param {Object} details The details of the Terms of Service.
    */
-  constructor( { userNumber, tosNumber, version, dateAccepted = new Date() } ) {
-    if ( !userNumber )
+  constructor( { userNumber, version, dateAccepted = new Date() } ) {
+    if ( typeof userNumber === `undefined` )
       throw Error( `Must give user's number` )
     this.userNumber = parseInt( userNumber )
-    if ( !tosNumber )
-      throw Error( `Must give terms of service's number` )
-    this.tosNumber = parseInt( tosNumber )
-    if ( !version )
+    if ( typeof version === `undefined` )
       throw Error( `Must give terms of service's version` )
-    this.version = parseDate( version )
+    this.version = ( typeof version == `string` ) ?
+      parseDate( version ) : version
     this.dateAccepted =  ( typeof dateAccepted == `string` ) ?
       parseDate( dateAccepted ) : dateAccepted
+  }
+
+  /**
+   * @returns {Object} The partition key.
+   */
+  pk() {
+    return { 'S': `USER#${ ZeroPadNumber( this.userNumber ) }` }
   }
 
   /**
@@ -24,7 +29,7 @@ class TOS {
   key() {
     return {
       'PK': { 'S': `USER#${ ZeroPadNumber( this.userNumber ) }` },
-      'SK': { 'S': `#TOS#${ ZeroPadNumber( this.tosNumber ) }` }
+      'SK': { 'S': `#TOS#${ this.version.toISOString() }` }
     }
   }
 
@@ -35,9 +40,7 @@ class TOS {
     return {
       ...this.key(),
       'Type': { 'S': `terms of service` },
-      'Version': { 'S': this.version.toISOString() },
-      'DateAccepted': { 'S': this.dateAccepted.toISOString() },
-      'NumberTOS': { 'N': this.tosNumber.toString() }
+      'DateAccepted': { 'S': this.dateAccepted.toISOString() }
     }
   }
 }
@@ -51,13 +54,9 @@ const tosFromItem = ( item ) => {
   console.log( `item`, item )
   return new TOS( {
     userNumber: item.PK.S.split( `#` )[1],
-    tosNumber: item.SK.S.split( `#` )[2],
-    version: item.Version.S,
+    version: parseDate( item.SK.S.split( `#` )[2] ),
     dateAccepted: parseDate( item.DateAccepted.S )
   } )
 }
 
-module.exports = {
-  TOS,
-  tosFromItem
-}
+module.exports = { TOS, tosFromItem }

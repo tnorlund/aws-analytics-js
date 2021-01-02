@@ -32,7 +32,7 @@ class Comment {
     this.dateAdded = (
       ( typeof dateAdded == `string` ) ? parseDate( dateAdded ): dateAdded
     )
-    if ( !Array.isArray( replyChain) )
+    if ( !Array.isArray( replyChain ) )
       throw new Error( `Chain of comments must be an array.` )
     this.replyChain = replyChain.map( ( date ) => {
       if ( typeof date == `string` ) return parseDate( date )
