@@ -1,5 +1,6 @@
-const { parseDate } = require( `./utils` )
-const { ZeroPadNumber } = require( `./utils` )
+const {
+  parseDate, ZeroPadNumber, variableToItemAttribute
+} = require( `./utils` )
 
 class Comment {
   /**
@@ -19,7 +20,7 @@ class Comment {
     if ( typeof userName === `undefined` )
       throw Error( `Must give the user's name.` )
     this.userName = userName
-    if ( typeof slug === `undefined` ) 
+    if ( typeof slug === `undefined` )
       throw new Error( `Must give post's slug` )
     this.slug = slug
     if ( typeof text === `undefined` )
@@ -48,26 +49,30 @@ class Comment {
   /**
    * @returns {Object} The partition key.
    */
-  pk() { return {
-    'S': `USER#${ ZeroPadNumber( this.userNumber ) }`
-  } }
+  pk() {
+    return variableToItemAttribute(
+      `USER#${ ZeroPadNumber( this.userNumber ) }`
+    )
+  }
 
   /**
    * @returns {Object} The primary key.
    */
   key() {
     return {
-      'PK': {
-        'S': `USER#${ ZeroPadNumber( this.userNumber ) }`
-      },
-      'SK': { 'S': `#COMMENT#${ this.dateAdded.toISOString() }` }
+      'PK': variableToItemAttribute(
+        `USER#${ ZeroPadNumber( this.userNumber ) }`
+      ),
+      'SK': variableToItemAttribute(
+        `#COMMENT#${ this.dateAdded.toISOString() }`
+      )
     }
   }
 
   /**
    * @returns {Object} The global secondary index partition key.
    */
-  gsi1pk() { return { 'S': `POST#${ this.slug }` } }
+  gsi1pk() { return variableToItemAttribute( `POST#${ this.slug }` ) }
 
   /**
    * @returns {Object} The global secondary index primary key.
@@ -75,19 +80,19 @@ class Comment {
   gsi1() {
     if ( this.replyChain.length == 0 )
       return {
-        'GSI1PK': { 'S': `POST#${ this.slug }` },
-        'GSI1SK': {
-          'S': `#COMMENT#${ this.dateAdded.toISOString() }`
-        }
+        'GSI1PK': variableToItemAttribute( `POST#${ this.slug }` ),
+        'GSI1SK': variableToItemAttribute(
+          `#COMMENT#${ this.dateAdded.toISOString() }`
+        )
       }
     else
       return {
-        'GSI1PK': { 'S': `POST#${ this.slug }` },
-        'GSI1SK': {
-          'S': `#COMMENT#`
+        'GSI1PK': variableToItemAttribute( `POST#${ this.slug }` ),
+        'GSI1SK': variableToItemAttribute(
+          `#COMMENT#`
             + this.replyChain.map( ( date ) => date.toISOString() )
               .join( `#COMMENT#` ) + `#COMMENT#` + this.dateAdded.toISOString()
-        }
+        )
       }
   }
 
@@ -98,14 +103,14 @@ class Comment {
     return {
       ...this.key(),
       ...this.gsi1(),
-      'Type': { 'S': `comment` },
-      'User': { 'S': this.userName },
-      'Text': { 'S': this.text },
-      'Vote': { 'N': String( this.vote ) },
-      'NumberVotes': { 'N': String( this.numberVotes ) },
-      'Slug': { 'S': this.slug },
-      'UserCommentNumber': { 'N': String( this.userCommentNumber ) },
-      'DateAdded': { 'S': this.dateAdded.toISOString() }
+      'Type': variableToItemAttribute( `comment` ),
+      'User': variableToItemAttribute( this.userName ),
+      'Text': variableToItemAttribute( this.text ),
+      'Vote': variableToItemAttribute( this.vote ),
+      'NumberVotes': variableToItemAttribute( this.numberVotes ),
+      'Slug': variableToItemAttribute( this.slug ),
+      'UserCommentNumber': variableToItemAttribute( this.userCommentNumber ),
+      'DateAdded': variableToItemAttribute( this.dateAdded )
     }
   }
 }

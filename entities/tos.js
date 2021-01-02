@@ -1,4 +1,7 @@
-const { ZeroPadNumber, parseDate } = require( `./utils` )
+const {
+  ZeroPadNumber, parseDate, variableToItemAttribute
+} = require( `./utils` )
+
 class TOS {
   /**
    * A Terms of Service object.
@@ -20,7 +23,10 @@ class TOS {
    * @returns {Object} The partition key.
    */
   pk() {
-    return { 'S': `USER#${ ZeroPadNumber( this.userNumber ) }` }
+    return variableToItemAttribute(
+      `USER#${ ZeroPadNumber( this.userNumber ) }`
+    )
+    // { 'S': `USER#${ ZeroPadNumber( this.userNumber ) }` }
   }
 
   /**
@@ -28,8 +34,12 @@ class TOS {
    */
   key() {
     return {
-      'PK': { 'S': `USER#${ ZeroPadNumber( this.userNumber ) }` },
-      'SK': { 'S': `#TOS#${ this.version.toISOString() }` }
+      'PK': variableToItemAttribute(
+        `USER#${ ZeroPadNumber( this.userNumber ) }`
+      ),
+      'SK': variableToItemAttribute(
+        `#TOS#${ this.version.toISOString() }`
+      )
     }
   }
 
@@ -39,8 +49,8 @@ class TOS {
   toItem() {
     return {
       ...this.key(),
-      'Type': { 'S': `terms of service` },
-      'DateAccepted': { 'S': this.dateAccepted.toISOString() }
+      'Type': variableToItemAttribute( `terms of service` ),
+      'DateAccepted': variableToItemAttribute( this.dateAccepted )
     }
   }
 }

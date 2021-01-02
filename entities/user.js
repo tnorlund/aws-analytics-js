@@ -1,4 +1,6 @@
-const { ZeroPadNumber, parseDate } = require( `./utils` )
+const { 
+  ZeroPadNumber, parseDate, variableToItemAttribute 
+} = require( `./utils` )
 /**
  * User library
  */
@@ -51,7 +53,9 @@ class User {
    * @returns {Object} The partition key.
    */
   pk() {
-    return { 'S': `USER#${ ZeroPadNumber( this.userNumber ) }` }
+    return variableToItemAttribute(
+      `USER#${ ZeroPadNumber( this.userNumber ) }`
+    )
   }
 
   /**
@@ -59,8 +63,10 @@ class User {
    */
   key() {
     return {
-      'PK': { 'S': `USER#${ ZeroPadNumber( this.userNumber ) }` },
-      'SK': { 'S': `#USER` }
+      'PK':variableToItemAttribute(
+        `USER#${ ZeroPadNumber( this.userNumber ) }`
+      ),
+      'SK': variableToItemAttribute( `#USER` )
     }
   }
 
@@ -70,14 +76,14 @@ class User {
   toItem() {
     return {
       ...this.key(),
-      'Type': { 'S': `user` },
-      'Name': { 'S': this.name },
-      'Email': { 'S': this.email },
-      'DateJoined': { 'S': this.dateJoined.toISOString() },
-      'NumberFollows': { 'N': this.numberFollows.toString() },
-      'NumberComments': { 'N': this.numberComments.toString() },
-      'NumberVotes': { 'N': this.numberVotes.toString() },
-      'TotalKarma': { 'N': this.totalKarma.toString() }
+      'Type': variableToItemAttribute( `user` ),
+      'Name': variableToItemAttribute( this.name ),
+      'Email': variableToItemAttribute( this.email ),
+      'DateJoined': variableToItemAttribute( this.dateJoined ),
+      'NumberFollows': variableToItemAttribute( this.numberFollows ),
+      'NumberComments': variableToItemAttribute( this.numberVotes ),
+      'NumberVotes': variableToItemAttribute( this.numberVotes ),
+      'TotalKarma': variableToItemAttribute( this.totalKarma )
     }
   }
 }

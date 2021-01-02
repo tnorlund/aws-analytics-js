@@ -1,4 +1,4 @@
-const { ZeroPadNumber, parseDate, isIP } = require( `../utils` )
+const { ZeroPadNumber, parseDate, isIP, variableToItemAttribute } = require( `../utils` )
 
 describe( `utility functions`, () => {
   describe( `zeroPadNumber`, () => {
@@ -19,5 +19,16 @@ describe( `utility functions`, () => {
     test( `valid parameter`, () => expect( isIP( `0.0.0.0` ) ).toEqual( true ) )
     test( `valid parameter`, () => expect( isIP( `something` ) ).toEqual( false ) )
     test( `invalid parameter`, () => expect( () => isIP( {} ) ).toThrow() )
+  } )
+
+  describe( `variableToItemAttribute`, () => {
+    test( `string`, () => expect( variableToItemAttribute( `something` ) ).toEqual( { 'S': `something` } ) )
+    test( `empty string`, () => expect( variableToItemAttribute( `` ) ).toEqual( { 'NULL': true } ) )
+    test( `none string`, () => expect( variableToItemAttribute( `None` ) ).toEqual( { 'NULL': true } ) )
+    test( `boolean`, () => expect( variableToItemAttribute( true ) ).toEqual( { 'BOOL': true } ) )
+    test( `number array`, () => expect( variableToItemAttribute( [ 1, 2, 3 ] ) ).toEqual( { 'NS': [ `1`, `2`, `3` ] } ) )
+    test( `number array`, () => expect( variableToItemAttribute( [ `1`, `2`, `3` ] ) ).toEqual( { 'NS': [ `1`, `2`, `3` ] } ) )
+    test( `string array`, () => expect( variableToItemAttribute( [ `something`, `something`, `something` ] ) ).toEqual( { 'SS': [ `something`, `something`, `something` ] } ) )
+    test( `map`, () => expect( variableToItemAttribute( { 'First': 1, 'Second': `something`} ) ).toEqual( { 'M': { 'First': { 'N': `1` }, 'Second': { 'S': `something` } } } ) )
   } )
 } )

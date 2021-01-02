@@ -27,10 +27,39 @@ const parseDate = ( dateString ) => {
     throw new Error( `Date must be formatted with ISO format.` )
 }
 
+/**
+ * Determines whether a string is formatted as an IP address.
+ * @param {String} ip The IP address to check.
+ */
 const isIP = ( ip ) => {
   if ( typeof ip !== `string` )
     throw Error( `Must pass IP address as a string` )
   return Boolean( ip.match( /\d+\.\d+\.\d+\.\d/ ) )
 }
 
-module.exports = { ZeroPadNumber, parseDate, isIP }
+/**
+ * Converts a JS variable into DynamoDB syntax.
+ * @param {Any} variable The variable to be converted.
+ */
+const variableToItemAttribute = ( variable ) => {
+  if ( typeof variable === `number` ) return { 'N': variable.toString() }
+  if ( typeof variable === `boolean` ) return { 'BOOL': variable }
+  if ( variable instanceof Date ) return { 'S': variable.toISOString() }
+  if ( 
+    typeof variable === `undefined` || variable == `` || variable == `None`
+  ) return { 'NULL': true }
+  if ( Array.isArray( variable ) ) {
+    if ( !variable.some( isNaN ) ) return { 'NS': variable.map( String ) }
+    else return { 'SS': variable }
+  }
+  if ( Object.prototype.toString.call( variable ) === `[object Object]` ) {
+    let attribute = {}
+    Object.keys( variable ).map( 
+      key => attribute[key] = variableToItemAttribute( variable[key] ) 
+    ) 
+    return { 'M': { ...attribute } }
+  }
+  return { 'S': variable.toString() }
+}
+
+module.exports = { ZeroPadNumber, parseDate, isIP, variableToItemAttribute }

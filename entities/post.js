@@ -1,3 +1,5 @@
+const { variableToItemAttribute } = require( `./utils` )
+
 class Post {
   /**
    * A project object.
@@ -16,30 +18,30 @@ class Post {
   /**
    * @returns {Object} The partition key.
    */
-  pk() { return { 'S': `#POST` } }
+  pk() { return variableToItemAttribute( `#POST` ) }
 
   /**
    * @returns {Object} The primary key.
    */
   key() {
     return {
-      'PK': { 'S': `#POST` },
-      'SK': { 'S': `POST#${ this.slug }` }
+      'PK': variableToItemAttribute( `#POST` ),
+      'SK': variableToItemAttribute( `POST#${ this.slug }` )
     }
   }
 
   /**
    * @returns {Object} The global secondary index partition key.
    */
-  gsi1pk() { return { 'S': `POST#${ this.slug }` } }
+  gsi1pk() { return variableToItemAttribute( `POST#${ this.slug }` ) }
 
   /**
    * @returns {Object} The global secondary index primary key.
    */
   gsi1() {
     return {
-      'GSI1PK': { 'S': `POST#${ this.slug }` },
-      'GSI1SK': { 'S': `#POST` }
+      'GSI1PK': variableToItemAttribute( `POST#${ this.slug }` ),
+      'GSI1SK': variableToItemAttribute( `#POST` )
     }
   }
 
@@ -50,10 +52,10 @@ class Post {
     return {
       ...this.key(),
       ...this.gsi1(),
-      'Type': { 'S': `post` },
-      'Slug': { 'S': this.slug },
-      'Title': { 'S': this.title },
-      'NumberComments': { 'N': this.numberComments.toString() }
+      'Type': variableToItemAttribute( `post` ),
+      'Slug': variableToItemAttribute( this.slug ),
+      'Title': variableToItemAttribute( this.title ),
+      'NumberComments': variableToItemAttribute( this.numberComments )
     }
   }
 }

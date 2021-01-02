@@ -1,3 +1,5 @@
+const { variableToItemAttribute } = require( `./utils` )
+
 class Project {
   /**
    * A project object.
@@ -16,30 +18,30 @@ class Project {
   /**
    * @returns {Object} The partition key.
    */
-  pk() { return { 'S': `#PROJECT` } }
+  pk() { return variableToItemAttribute( `#PROJECT` ) }
 
   /**
    * @returns {Object} The primary key.
    */
   key() {
     return {
-      'PK': { 'S': `#PROJECT` },
-      'SK': { 'S': `PROJECT#${ this.slug }` }
+      'PK': variableToItemAttribute( `#PROJECT` ),
+      'SK': variableToItemAttribute( `PROJECT#${ this.slug }` )
     }
   }
 
   /**
    * @returns {Object} The global secondary index partition key.
    */
-  gsi1pk() { return { 'S': `PROJECT#${ this.slug }` } }
+  gsi1pk() { return variableToItemAttribute( `PROJECT#${ this.slug }` ) }
 
   /**
    * @returns {Object} The global secondary index primary key.
    */
   gsi1() {
     return {
-      'GSI1PK': { 'S': `PROJECT#${ this.slug }` },
-      'GSI1SK': { 'S': `#PROJECT` }
+      'GSI1PK': variableToItemAttribute( `PROJECT#${ this.slug }` ),
+      'GSI1SK': variableToItemAttribute( `#PROJECT` )
     }
   }
 
@@ -50,10 +52,10 @@ class Project {
     return {
       ...this.key(),
       ...this.gsi1(),
-      'Type': { 'S': `project` },
-      'Slug': { 'S': this.slug },
-      'Title': { 'S': this.title },
-      'NumberFollows': { 'N': this.numberFollows.toString() }
+      'Type': variableToItemAttribute( `project` ),
+      'Slug': variableToItemAttribute( this.slug ),
+      'Title': variableToItemAttribute( this.title ),
+      'NumberFollows': variableToItemAttribute( this.numberFollows )
     }
   }
 }

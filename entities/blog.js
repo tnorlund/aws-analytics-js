@@ -1,3 +1,5 @@
+const { variableToItemAttribute } = require( `./utils` )
+
 class Blog {
   /**
    * A blog object.
@@ -21,8 +23,8 @@ class Blog {
    */
   key() {
     return {
-      'PK': { 'S': `#BLOG` },
-      'SK': { 'S': `#BLOG` }
+      'PK': variableToItemAttribute( `#BLOG` ), 
+      'SK': variableToItemAttribute( `#BLOG` )
     }
   }
   /**
@@ -31,10 +33,10 @@ class Blog {
   toItem() {
     return {
       ...this.key(),
-      'Type': { 'S': `blog` },
-      'NumberUsers': { 'N': this.numberUsers.toString() },
-      'NumberPosts': { 'N': this.numberPosts.toString() },
-      'NumberProjects': { 'N': this.numberProjects.toString() }
+      'Type': variableToItemAttribute( `blog` ),
+      'NumberUsers': variableToItemAttribute( this.numberUsers ),
+      'NumberPosts': variableToItemAttribute( this.numberPosts ),
+      'NumberProjects': variableToItemAttribute( this.numberProjects )
     }
   }
 }

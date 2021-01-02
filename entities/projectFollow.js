@@ -1,4 +1,6 @@
-const { ZeroPadNumber, parseDate } = require( `./utils` )
+const { 
+  ZeroPadNumber, parseDate, variableToItemAttribute
+} = require( `./utils` )
 class ProjectFollow {
   /**
    * A project's follow object.
@@ -32,7 +34,9 @@ class ProjectFollow {
    * @returns {Object} The partition key.
    */
   pk() {
-    return { 'S': `USER#${ ZeroPadNumber( this.userNumber ) }` }
+    return variableToItemAttribute(
+      `USER#${ ZeroPadNumber( this.userNumber ) }`
+    )
   }
 
   /**
@@ -40,8 +44,10 @@ class ProjectFollow {
    */
   key() {
     return {
-      'PK': { 'S': `USER#${ ZeroPadNumber( this.userNumber ) }` },
-      'SK': { 'S': `#PROJECT#${ this.slug }` }
+      'PK': variableToItemAttribute(
+        `USER#${ ZeroPadNumber( this.userNumber ) }`
+      ),
+      'SK': variableToItemAttribute( `#PROJECT#${ this.slug }` )
     }
   }
 
@@ -49,7 +55,7 @@ class ProjectFollow {
    * @returns {Object} The global secondary index partition key.
    */
   gsi1pk() {
-    return { 'S': `PROJECT#${ this.slug }` }
+    return variableToItemAttribute( `PROJECT#${ this.slug }` )
   }
 
   /**
@@ -57,10 +63,10 @@ class ProjectFollow {
    */
   gsi1() {
     return {
-      'GSI1PK': { 'S': `PROJECT#${ this.slug }` },
-      'GSI1SK': {
-        'S': `#PROJECT#${ this.dateFollowed.toISOString() }`
-      }
+      'GSI1PK': variableToItemAttribute( `PROJECT#${ this.slug }` ),
+      'GSI1SK': variableToItemAttribute(
+        `#PROJECT#${ this.dateFollowed.toISOString() }`
+      )
     }
   }
 
