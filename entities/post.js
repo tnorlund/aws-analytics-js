@@ -4,17 +4,19 @@ class Post {
    * @param {Object} details The details of the project.
    */
   constructor( { slug, title, numberComments = `0` } ) {
-    if ( typeof slug === `undefined` ) throw Error( `Must give slug` )
+    if ( typeof slug === `undefined` ) throw new Error( `Must give slug` )
     this.slug = slug
-    if ( typeof title === `undefined` ) throw Error( `Must give title` )
+    if ( typeof title === `undefined` ) throw new Error( `Must give title` )
     this.title = title
+    if ( parseInt( numberComments ) < 0 ) 
+      throw new Error( `Number of comments must be positive` )
     this.numberComments = parseInt( numberComments )
   }
 
   /**
    * @returns {Object} The partition key.
    */
-  pk() { return { 'PK': { 'S': `#POST` } } }
+  pk() { return { 'S': `#POST` } }
 
   /**
    * @returns {Object} The primary key.

@@ -1,4 +1,4 @@
-const { Blog, blogFromItem } = require( '..' )
+const { Blog, blogFromItem } = require( `..` )
 
 const validBlogs = [
   {},
@@ -21,7 +21,7 @@ const invalidBlogs = [
 
 describe( `blog object`, () => {
   test.each( validBlogs )(
-    'valid constructor', 
+    `valid constructor`, 
     parameter => expect( new Blog( parameter ) ).toEqual( {
       numberUsers: 0, numberPosts: 0, numberProjects: 0
     } )
@@ -32,7 +32,7 @@ describe( `blog object`, () => {
     parameter => expect( () => new Blog( parameter ) ).toThrow()
   )
   
-  test( `blog key`, () => {
+  test( `key`, () => {
     expect( new Blog( {} ).key() ).toEqual( {
       'PK': { 'S': `#BLOG` },
       'SK': { 'S': `#BLOG` }

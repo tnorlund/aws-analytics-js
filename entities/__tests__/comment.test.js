@@ -60,7 +60,7 @@ describe( `comment object`, () => {
   
   test.each( invalidComments )(
     `invalid constructor`,
-    parameter => expect( () => new Comment( parameter) ).toThrow()
+    parameter => expect( () => new Comment( parameter ) ).toThrow()
   )
   
   test( `pk`, () => { 

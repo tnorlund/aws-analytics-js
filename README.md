@@ -6,6 +6,6 @@ A package for accessing the Blog DB using Node.
 
 [ ] Move old code to this repository
 
-[ ] Add unit tests
+[X] Add unit tests
 
 [ ] Add entities for analytics

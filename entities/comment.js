@@ -1,6 +1,6 @@
 const { parseDate } = require( `./utils` )
-
 const { ZeroPadNumber } = require( `./utils` )
+
 class Comment {
   /**
    * A project object.
