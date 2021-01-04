@@ -9,6 +9,7 @@ const { Vote, voteFromItem } = require( `./vote` )
 const { Visitor, visitorFromItem } = require( `./visitor` )
 const { Visit, visitFromItem } = require( `./visit` )
 const { Session, sessionFromItem } = require( `./session` )
+const { Browser, browserFromItem } = require( `./browser` )
 
 module.exports = {
   Blog, blogFromItem,
@@ -21,5 +22,6 @@ module.exports = {
   Vote, voteFromItem,
   Visitor, visitorFromItem,
   Visit, visitFromItem,
-  Session, sessionFromItem 
+  Session, sessionFromItem,
+  Browser, browserFromItem
 }

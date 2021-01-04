@@ -62,7 +62,7 @@ class Session {
   }
 
   /**
-   * @returns {Object} The DynamoDB syntax of a visit.
+   * @returns {Object} The DynamoDB syntax of a session.
    */
   toItem() {
     return {
@@ -75,6 +75,11 @@ class Session {
   }
 }
 
+/**
+ * Turns the session from a DynamoDB item into the class.
+ * @param   {Object} item The item returned from DynamoDB.
+ * @returns {Object}      The session as a class.
+ */
 const sessionFromItem = ( item ) => {
   return new Session( {
     sessionStart: item.GSI2PK.S.split( `#` )[2], 
