@@ -7,6 +7,7 @@ const { Post, postFromItem } = require( `./post` )
 const { Comment, commentFromItem } = require( `./comment` )
 const { Vote, voteFromItem } = require( `./vote` )
 const { Visitor, visitorFromItem } = require( `./visitor` )
+const { Visit, visitFromItem } = require( `./visit` )
 
 module.exports = {
   Blog, blogFromItem,
@@ -17,5 +18,6 @@ module.exports = {
   Post, postFromItem,
   Comment, commentFromItem,
   Vote, voteFromItem,
-  Visitor, visitorFromItem
+  Visitor, visitorFromItem,
+  Visit, visitFromItem
 }
