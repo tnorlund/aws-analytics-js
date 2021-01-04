@@ -26,7 +26,6 @@ class TOS {
     return variableToItemAttribute(
       `USER#${ ZeroPadNumber( this.userNumber ) }`
     )
-    // { 'S': `USER#${ ZeroPadNumber( this.userNumber ) }` }
   }
 
   /**
