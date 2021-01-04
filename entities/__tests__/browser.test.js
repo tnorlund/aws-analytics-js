@@ -1,5 +1,4 @@
 const { Browser, browserFromItem } = require( `..` )
-const { ZeroPadNumber } = require( `../utils` )
 
 const app = `Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Mobile/15E148 Safari/604.1`
 const ip = `0.0.0.0`
@@ -20,7 +19,7 @@ const validBrowsers = [
   { app, ip, width, height, dateVisited, device, deviceType, browser: browser_name, os, webkit, version, dateAdded: dateAdded.toISOString() }
 ]
 
-const invalideBrowsers = [
+const invalidBrowsers = [
   {},
   { app },
   { app, ip: `something` }
@@ -56,7 +55,7 @@ describe( `browser object`, () => {
     expect( browser.dateAdded ).toEqual( dateAdded )
   } )
 
-  test.each( invalideBrowsers )(
+  test.each( invalidBrowsers )(
     `invalid constructor`,
     parameter => expect( () => new Browser( parameter ) ).toThrow()
   )
