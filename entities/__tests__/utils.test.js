@@ -7,6 +7,8 @@ describe( `utility functions`, () => {
     test( `valid parameter`, () => expect( ZeroPadNumber( `1` ) ).toEqual( `000001` ) )
     test( `invalid parameter`, () => expect( () => ZeroPadNumber( `something` ) ).toThrow() )
     test( `invalid parameter`, () => expect( () => ZeroPadNumber( `-1` ) ).toThrow() )
+    test( `invalid parameter`, () => expect( () => ZeroPadNumber( 0, `something` ) ).toThrow() )
+    test( `invalid parameter`, () => expect( () => ZeroPadNumber( 0, `-1` ) ).toThrow() )
   } )
 
   describe( `parseDate`, () => {

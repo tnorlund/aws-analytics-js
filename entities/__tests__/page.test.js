@@ -108,5 +108,3 @@ describe( `page object`, () => {
     expect( pageFromItem( page.toItem() ) ).toStrictEqual( page )
   } )
 } )
-
-

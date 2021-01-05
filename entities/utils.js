@@ -3,12 +3,16 @@
  * @param {Number} number The number to zero-pad
  * @returns {String}      The zero-padded number as a string.
  */
-function ZeroPadNumber( number ) {
+function ZeroPadNumber( number, padding = 6 ) {
   if ( isNaN( number ) )
     throw new Error( `Must pass a number` )
   if ( parseInt( number ) < 0 )
     throw new Error( `Must pass a positive number` )
-  return ( `00000` + number ).slice( -6 )
+  if ( isNaN( padding ) )
+    throw new Error( `Must pass padding as a number` )
+  if ( parseInt( padding ) < 0 )
+    throw new Error( `Padding must be a positive number` )
+  return ( `00000` + number ).slice( -padding )
 }
 
 /**

@@ -12,6 +12,7 @@ const { Session, sessionFromItem } = require( `./session` )
 const { Browser, browserFromItem } = require( `./browser` )
 const { Location, locationFromItem } = require( `./location` )
 const { Page, pageFromItem } = require( `./page` )
+const { Day, dayFromItem } = require( `./day` )
 
 module.exports = {
   Blog, blogFromItem,
@@ -27,5 +28,6 @@ module.exports = {
   Session, sessionFromItem,
   Browser, browserFromItem,
   Location, locationFromItem,
-  Page, pageFromItem
+  Page, pageFromItem,
+  Day, dayFromItem
 }

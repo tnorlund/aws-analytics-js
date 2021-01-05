@@ -1,12 +1,15 @@
-const { variableToItemAttribute, mappingToObject } = require( `./utils` )
+const { 
+  variableToItemAttribute, mappingToObject, ZeroPadNumber 
+} = require( `./utils` )
 
-class Page {
+class Day {
   /**
-   * A page object.
-   * @param {Object} details The details of the page.
+   * A day object.
+   * @param {Object} details The details of the day.
    */
   constructor( {
-    slug, title, numberVisitors, averageTime, percentChurn, fromPage, toPage
+    slug, title, date, numberVisitors, averageTime, percentChurn, fromPage,
+    toPage
   } ) {
     if ( typeof slug === `undefined` )
       throw new Error( `Must give slug` )
@@ -14,6 +17,14 @@ class Page {
     if ( typeof title === `undefined` )
       throw new Error( `Must give title` )
     this.title = title
+    if ( typeof date === `undefined` )
+      throw new Error( `Must give date` )
+    const date_match = date.match( /([0-9]+)-([0-9]+)-([0-9]+)/ )
+    if ( !date_match )
+      throw new Error( `Date must be given as <year>-<month>-<day>` )
+    this.year = parseInt( date_match[ 1 ] )
+    this.month = parseInt( date_match[ 2 ] )
+    this.day = parseInt( date_match[ 3 ] )
     if ( typeof numberVisitors === `undefined` )
       throw new Error( `Must give the number of visitors` )
     if ( isNaN( numberVisitors ) )
@@ -52,35 +63,39 @@ class Page {
   key() {
     return {
       'PK': variableToItemAttribute( `PAGE#${ this.slug }` ),
-      'SK': variableToItemAttribute( `#PAGE` )
+      'SK': variableToItemAttribute( `#DAY#${ 
+        ZeroPadNumber( this.year, 4 ) }-${ ZeroPadNumber( this.month , 2 ) 
+      }-${ ZeroPadNumber( this.day, 2 ) }` )
     }
   }
 
   /**
-   * @returns {Object} The first global secondary index partition key.
+   * @returns {Object} The first global secondary index primary key
    */
   gsi1pk() {
     return variableToItemAttribute( `PAGE#${ this.slug }` )
   }
 
   /**
-   * @returns {Object} The primary key.
+   * @returns {Object} The first global secondary index primary key
    */
   gsi1() {
     return {
       'GSI1PK': variableToItemAttribute( `PAGE#${ this.slug }` ),
-      'GSI1SK': variableToItemAttribute( `#PAGE` )
+      'GSI1SK': variableToItemAttribute( `#DAY#${ 
+        ZeroPadNumber( this.year, 4 ) }-${ ZeroPadNumber( this.month , 2 ) 
+      }-${ ZeroPadNumber( this.day, 2 ) }` )
     }
   }
 
   /**
-   * @returns {Object} The DynamoDB syntax of a page.
+   * @returns {Object} The DynamoDB syntax of a day.
    */
   toItem() {
     return {
       ...this.key(),
       ...this.gsi1(),
-      'Type': variableToItemAttribute( `page` ),
+      'Type': variableToItemAttribute( `day` ),
       'Title': variableToItemAttribute( this.title ),
       'Slug': variableToItemAttribute( this.slug ),
       'NumberVisitors': variableToItemAttribute( this.numberVisitors ),
@@ -92,10 +107,11 @@ class Page {
   }
 }
 
-const pageFromItem = ( item ) => {
-  return new Page( {
+const dayFromItem = ( item ) => {
+  return new Day( {
     slug: item.Slug.S, 
     title: item.Title.S, 
+    date: item.SK.S.split( `#` )[ 2 ],
     numberVisitors: item.NumberVisitors.N, 
     averageTime: item.AverageTime.N, 
     percentChurn: item.PercentChurn.N, 
@@ -104,4 +120,4 @@ const pageFromItem = ( item ) => {
   } )
 }
 
-module.exports = { Page, pageFromItem }
+module.exports = { Day, dayFromItem }

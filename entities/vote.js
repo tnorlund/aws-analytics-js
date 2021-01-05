@@ -64,12 +64,12 @@ class Vote {
   }
 
   /**
-   * @returns {Object} The global secondary index partition key
+   * @returns {Object} The first global secondary index primary key
    */
   gsi1pk() { return {'S': `POST#${ this.slug }` } }
 
   /**
-   * @returns {Object} The global secondary index primary key
+   * @returns {Object} The first global secondary index primary key
    */
   gsi1() {
     return {
