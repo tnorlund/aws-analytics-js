@@ -1,37 +1,39 @@
 const { Blog, blogFromItem } = require( `./blog` )
-const { User, userFromItem } = require( `./user` )
-const { TOS, tosFromItem } = require( `./tos` )
+const { Browser, browserFromItem } = require( `./browser` )
+const { Comment, commentFromItem } = require( `./comment` )
+const { Day, dayFromItem } = require( `./day` )
+const { Location, locationFromItem } = require( `./location` )
+const { Month, monthFromItem } = require( `./month` )
+const { Page, pageFromItem } = require( `./page` )
+const { Post, postFromItem } = require( `./post` )
 const { Project, projectFromItem } = require( `./project` )
 const { ProjectFollow, projectFollowFromItem } = require( `./projectFollow` )
-const { Post, postFromItem } = require( `./post` )
-const { Comment, commentFromItem } = require( `./comment` )
-const { Vote, voteFromItem } = require( `./vote` )
-const { Visitor, visitorFromItem } = require( `./visitor` )
-const { Visit, visitFromItem } = require( `./visit` )
 const { Session, sessionFromItem } = require( `./session` )
-const { Browser, browserFromItem } = require( `./browser` )
-const { Location, locationFromItem } = require( `./location` )
-const { Page, pageFromItem } = require( `./page` )
-const { Day, dayFromItem } = require( `./day` )
-const { Month, monthFromItem } = require( `./month` )
+const { TOS, tosFromItem } = require( `./tos` )
+const { User, userFromItem } = require( `./user` )
+const { Visit, visitFromItem } = require( `./visit` )
+const { Visitor, visitorFromItem } = require( `./visitor` )
+const { Vote, voteFromItem } = require( `./vote` )
 const { Week, weekFromItem } = require( `./week` )
+const { Year, yearFromItem } = require( `./year` )
 
 module.exports = {
   Blog, blogFromItem,
-  User, userFromItem,
-  TOS, tosFromItem,
+  Browser, browserFromItem,
+  Comment, commentFromItem,
+  Day, dayFromItem,
+  Location, locationFromItem,
+  Month, monthFromItem,
+  Page, pageFromItem,
+  Post, postFromItem,
   Project, projectFromItem,
   ProjectFollow, projectFollowFromItem,
-  Post, postFromItem,
-  Comment, commentFromItem,
-  Vote, voteFromItem,
-  Visitor, visitorFromItem,
-  Visit, visitFromItem,
   Session, sessionFromItem,
-  Browser, browserFromItem,
-  Location, locationFromItem,
-  Page, pageFromItem,
-  Day, dayFromItem,
-  Month, monthFromItem,
-  Week, weekFromItem
+  TOS, tosFromItem,
+  User, userFromItem,
+  Visit, visitFromItem,
+  Visitor, visitorFromItem,
+  Vote, voteFromItem,
+  Week, weekFromItem,
+  Year, yearFromItem
 }
