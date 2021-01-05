@@ -14,6 +14,7 @@ const { Location, locationFromItem } = require( `./location` )
 const { Page, pageFromItem } = require( `./page` )
 const { Day, dayFromItem } = require( `./day` )
 const { Month, monthFromItem } = require( `./month` )
+const { Week, weekFromItem } = require( `./week` )
 
 module.exports = {
   Blog, blogFromItem,
@@ -31,5 +32,6 @@ module.exports = {
   Location, locationFromItem,
   Page, pageFromItem,
   Day, dayFromItem,
-  Month, monthFromItem
+  Month, monthFromItem,
+  Week, weekFromItem
 }
