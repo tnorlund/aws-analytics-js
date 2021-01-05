@@ -11,6 +11,7 @@ const { Visit, visitFromItem } = require( `./visit` )
 const { Session, sessionFromItem } = require( `./session` )
 const { Browser, browserFromItem } = require( `./browser` )
 const { Location, locationFromItem } = require( `./location` )
+const { Page, pageFromItem } = require( `./page` )
 
 module.exports = {
   Blog, blogFromItem,
@@ -25,5 +26,6 @@ module.exports = {
   Visit, visitFromItem,
   Session, sessionFromItem,
   Browser, browserFromItem,
-  Location, locationFromItem
+  Location, locationFromItem,
+  Page, pageFromItem
 }

@@ -134,7 +134,7 @@ describe( `location object`, () => {
   } )
 
   test( `locationFromItem`, () => {
-    const location = new Location(  { ip, country, region, city, latitude, longitude, timezone, domains, autonomousSystem: autonomousSystem_null, isp, proxy, vpn, tor, dateAdded } )
-    expect( locationFromItem( location.toItem() ) ).toStrictEqual( location )
+    const location = new Location(  { ip, country, region, city, latitude, longitude, timezone, domains:[], autonomousSystem: autonomousSystem_null, isp, proxy, vpn, tor, dateAdded } )
+    expect( locationFromItem( location.toItem() ) ).toEqual( { ...location, domains: undefined } )
   } )
 } )

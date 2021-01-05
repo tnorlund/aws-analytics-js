@@ -38,8 +38,9 @@ const isIP = ( ip ) => {
 }
 
 /**
- * Converts a JS variable into DynamoDB syntax.
+ * Converts a Javascript variable into DynamoDB syntax.
  * @param {Any} variable The variable to be converted.
+ * @returns {Map} The variable as a DynamoDB attribute.
  */
 const variableToItemAttribute = ( variable ) => {
   if ( typeof variable === `number` ) return { 'N': variable.toString() }
@@ -62,4 +63,24 @@ const variableToItemAttribute = ( variable ) => {
   return { 'S': variable.toString() }
 }
 
-module.exports = { ZeroPadNumber, parseDate, isIP, variableToItemAttribute }
+/**
+ * Converts a DynamoDB-syntax map into a Javascript Map.
+ * @param {Map} mapping A DynamoDB-syntax map.
+ * @returns {Map} The mapping with the values and keys.
+ */
+const mappingToObject = ( mapping ) => {
+  const result = {}
+  Object.keys( mapping ).map( key => {
+    if ( `N` in mapping[key] )
+      result[key] = Number( mapping[key].N )
+    if ( `S` in mapping[key] )
+      result[key] = mapping[key].S
+    if ( `NULL` in mapping[key] ) 
+      mapping[key] = undefined
+  } )
+  return result
+}
+
+module.exports = { 
+  ZeroPadNumber, parseDate, isIP, variableToItemAttribute, mappingToObject
+}

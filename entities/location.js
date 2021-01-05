@@ -1,4 +1,6 @@
-const { parseDate, isIP, variableToItemAttribute } = require( `./utils` )
+const {
+  parseDate, isIP, variableToItemAttribute, mappingToObject 
+} = require( `./utils` )
 
 class Location {
   /**
@@ -90,15 +92,6 @@ class Location {
 }
 
 const locationFromItem = ( item ) => {
-  const autonomousSystem = {}
-  Object.keys( item.AutonomousSystem.M ).map( key => {
-    if ( `N` in item.AutonomousSystem.M[key] )
-      autonomousSystem[key] = Number( item.AutonomousSystem.M[key].N )
-    if ( `S` in item.AutonomousSystem.M[key] )
-      autonomousSystem[key] = item.AutonomousSystem.M[key].S
-    if ( `NULL` in item.AutonomousSystem.M[key] ) 
-      autonomousSystem[key] = undefined
-  } )
   return new Location( {
     ip: item.PK.S.split( `#` )[1], 
     country: item.Country.S,
@@ -109,7 +102,7 @@ const locationFromItem = ( item ) => {
     postalCode: ( `S` in item.PostalCode ) ? item.PostalCode.S : undefined,
     timezone: item.TimeZone.S,
     domains: ( `SS` in item.Domains ) ? item.Domains.SS : undefined,
-    autonomousSystem, 
+    autonomousSystem: mappingToObject( item.AutonomousSystem.M ), 
     isp: item.ISP.S, 
     proxy: item.Proxy.BOOL, 
     vpn: item.VPN.BOOL, 

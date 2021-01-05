@@ -1,4 +1,4 @@
-const { ZeroPadNumber, parseDate, isIP, variableToItemAttribute } = require( `../utils` )
+const { ZeroPadNumber, parseDate, isIP, variableToItemAttribute, mappingToObject } = require( `../utils` )
 
 describe( `utility functions`, () => {
   describe( `zeroPadNumber`, () => {
@@ -30,5 +30,14 @@ describe( `utility functions`, () => {
     test( `number array`, () => expect( variableToItemAttribute( [ `1`, `2`, `3` ] ) ).toEqual( { 'NS': [ `1`, `2`, `3` ] } ) )
     test( `string array`, () => expect( variableToItemAttribute( [ `something`, `something`, `something` ] ) ).toEqual( { 'SS': [ `something`, `something`, `something` ] } ) )
     test( `map`, () => expect( variableToItemAttribute( { 'First': 1, 'Second': `something`} ) ).toEqual( { 'M': { 'First': { 'N': `1` }, 'Second': { 'S': `something` } } } ) )
+  } )
+
+  describe( `mappingToObject`, () => {
+    const dynamo_map = { 'M': {
+      'Name': { 'S': `Tyler` },
+      'Age': { 'N': 1 },
+      'Social': { 'NULL': true }
+    } }
+    test( `mapping`, () => expect( mappingToObject( dynamo_map.M ) ).toEqual( { 'Name': `Tyler`, 'Age': 1, 'Social': undefined } ) )
   } )
 } )
