@@ -1,7 +1,5 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
-// const { dynamoDB } = require( `./client` )
-
 
 /**
  * Adds a Blog to a DynamoDB table
@@ -14,8 +12,7 @@ const createBlog = async ( tableName, blog ) => {
     const result = await dynamoDB.putItem( {
       TableName: tableName,
       Item: blog.toItem(),
-      ConditionExpression: `attribute_not_exists(PK)`,
-      ReturnConsumedCapacity: `TOTAL`
+      ConditionExpression: `attribute_not_exists(PK)`
     } )
     await result.promise()
 

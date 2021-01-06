@@ -10,10 +10,11 @@ const getBlog = async ( tableName ) => {
   if ( !tableName ) throw Error( `Must give the name of the DynamoDB table` )
   const blog = new Blog( {} )
   try {
-    const result = await dynamoDB.getItem( {
+    const query = await dynamoDB.getItem( {
       TableName: tableName,
       Key: blog.key()
-    } ).promise()
+    } )
+    const result = await query.promise()
     if ( !result.Item ) return { error: `Blog does not exist` }
     return { blog: blogFromItem( result.Item ) }
   } catch( error ) {

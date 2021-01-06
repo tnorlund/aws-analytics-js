@@ -23,7 +23,8 @@
   },
   "jest": {
     "verbose": true,
-    "collectCoverage": true
+    "collectCoverage": true,
+    "runInBand": true
   },
   "dependencies": {
     "aws-sdk": "^2.821.0"

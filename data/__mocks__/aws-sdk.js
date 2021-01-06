@@ -86,6 +86,13 @@ class DynamoDB {
       console.log( `error putItem`, error )
     }
   }
+  async getItem( parameter ){
+    try{
+      return new Request( this.client.getItem( parameter ).promise() )
+    } catch( error ) {
+      console.log( `ERROR mocked getItem`, error )
+    }
+  }
 }
 
 const awsSdkPromiseResponse = jest.fn().mockReturnValue(
