@@ -1,5 +1,3 @@
-const {
-  Blog, blogFromItem,
-} = require( `./entities` )
+const entities = require( `./entities` )
 
-module.exports = { Blog, blogFromItem }
+module.exports = { ...entities }

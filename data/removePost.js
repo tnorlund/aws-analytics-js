@@ -1,14 +1,3 @@
-// TODO
-// [ ] Get data from post
-// [X]   - Get the post
-// [X]   - Get comments
-// [ ]   - Get votes
-// [X] Delete each comment
-// [X]   - Decrement the number of comments per user
-// [ ] Delete each vote
-// [ ]   - Decrement the number of votes per user
-// [X] Delete the post
-
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
 const {

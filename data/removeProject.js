@@ -87,7 +87,7 @@ const decrementNumberUserFollows = async ( tableName, user ) => {
     user.numberFollows = String(
       parseInt( response.Attributes.NumberFollows.N ) + 1
     )
-    // Send the original back to esnure the correct keys are set.
+    // Send the original back to ensure the correct keys are set.
     return { 'userResponse': user }
   } catch( error ) {
     let errorMessage = `Could not unfollow project`

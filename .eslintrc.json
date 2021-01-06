@@ -16,7 +16,7 @@
     },
     "overrides": [ 
         {
-        "files": ["**/*.test.js"],
+        "files": ["**/*.test.js", "**/__mocks__/*.js"],
         "rules": { 
             "no-undef": "off",
             "max-len": "off"

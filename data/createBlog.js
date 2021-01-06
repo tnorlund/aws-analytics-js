@@ -1,5 +1,7 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
+// const { dynamoDB } = require( `./client` )
+
 
 /**
  * Adds a Blog to a DynamoDB table
@@ -9,13 +11,17 @@ const dynamoDB = new AWS.DynamoDB()
  */
 const createBlog = async ( tableName, blog ) => {
   try {
-    await dynamoDB.putItem( {
+    const result = await dynamoDB.putItem( {
       TableName: tableName,
       Item: blog.toItem(),
-      conditionExpression: `attribute_not_exists(PK)`
-    } ).promise()
+      ConditionExpression: `attribute_not_exists(PK)`,
+      ReturnConsumedCapacity: `TOTAL`
+    } )
+    await result.promise()
+
     return( { blog: blog } )
   } catch( error ) {
+    console.log( `ERROR createBlog ${ error }` )
     let errorMessage = `Could not create Blog`
     if ( error.code == `ConditionalCheckFailedException` )
       errorMessage = `Blog already exists`

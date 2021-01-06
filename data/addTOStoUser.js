@@ -1,6 +1,6 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
-const { TOS, userFromItem, tosFromItem } = require( `../entities` )
+const { TOS, userFromItem } = require( `../entities` )
 
 /**
  * Adds a user to DynamoDB.
