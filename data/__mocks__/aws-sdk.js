@@ -67,39 +67,4 @@ afterEach(
   }
 )
 
-class Request {
-  constructor( result ){ this.result = result }
-  promise() { return this.result }
-}
-
-class DynamoDB {
-  constructor() {
-    this.client = new AWS.DynamoDB()
-  }
-  async putItem( parameter ) { 
-    try {
-      const request = new Request( 
-        this.client.putItem( parameter ).promise() 
-      )
-      return request
-    } catch( error ) {
-      console.log( `error putItem`, error )
-    }
-  }
-  async getItem( parameter ){
-    try{
-      return new Request( this.client.getItem( parameter ).promise() )
-    } catch( error ) {
-      console.log( `ERROR mocked getItem`, error )
-    }
-  }
-}
-
-const awsSdkPromiseResponse = jest.fn().mockReturnValue(
-  Promise.resolve( true )
-)
-
-module.exports = { 
-  DynamoDB,
-  awsSdkPromiseResponse 
-}
+module.exports = AWS

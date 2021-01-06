@@ -7,19 +7,19 @@ const { Blog, blogFromItem } = require( `../entities` )
  * @param {String} tableName The name of the DynamoDB table
  */
 const getBlog = async ( tableName ) => {
-  if ( !tableName ) throw Error( `Must give the name of the DynamoDB table` )
+  if ( typeof tableName === `undefined` ) 
+    throw new Error( `Must give the name of the DynamoDB table` )
   const blog = new Blog( {} )
   try {
-    const query = await dynamoDB.getItem( {
+    const result = await dynamoDB.getItem( {
       TableName: tableName,
       Key: blog.key()
-    } )
-    const result = await query.promise()
+    } ).promise()
     if ( !result.Item ) return { error: `Blog does not exist` }
     return { blog: blogFromItem( result.Item ) }
   } catch( error ) {
     // eslint-disable-next-line no-console
-    console.log( `Failed to get blog`, error )
+    console.log( `Failed to get blog`, error.code )
     return { error: `Could not retrieve blog` }
   }
 }
