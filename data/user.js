@@ -35,7 +35,7 @@ const addUser = async ( tableName, user ) => {
  * @param {Object} user      The user to increment the number of projects they
  *                           follow.
  */
-const incrementNumberFollows = async ( tableName, user ) => {
+const incrementNumberUserFollows = async ( tableName, user ) => {
   if ( typeof tableName == `undefined` )
     throw new Error( `Must give the name of the DynamoDB table` )
   if ( typeof user == `undefined` )
@@ -67,7 +67,7 @@ const incrementNumberFollows = async ( tableName, user ) => {
  * @param {Object} user      The user to decrement the number of projects they
  *                           follow.
  */
-const decrementNumberFollows = async ( tableName, user ) => {
+const decrementNumberUserFollows = async ( tableName, user ) => {
   if ( typeof tableName == `undefined` )
     throw new Error( `Must give the name of the DynamoDB table` )
   if ( typeof user == `undefined` )
@@ -99,7 +99,7 @@ const decrementNumberFollows = async ( tableName, user ) => {
  * @param {Object} user      The user to increment the number of comments they
  *                           have.
  */
-const incrementNumberComments = async ( tableName, user ) => {
+const incrementNumberUserComments = async ( tableName, user ) => {
   if ( typeof tableName == `undefined` )
     throw new Error( `Must give the name of the DynamoDB table` )
   if ( typeof user == `undefined` )
@@ -131,7 +131,7 @@ const incrementNumberComments = async ( tableName, user ) => {
  * @param {Object} user      The user to decrement the number of comments they
  *                           have.
  */
-const decrementNumberComments = async ( tableName, user ) => {
+const decrementNumberUserComments = async ( tableName, user ) => {
   if ( typeof tableName == `undefined` )
     throw new Error( `Must give the name of the DynamoDB table` )
   if ( typeof user == `undefined` )
@@ -163,7 +163,7 @@ const decrementNumberComments = async ( tableName, user ) => {
  * @param {Object} user      The user to increment the number of votes they
  *                           have.
  */
-const incrementNumberVotes = async ( tableName, user ) => {
+const incrementNumberUserVotes = async ( tableName, user ) => {
   if ( typeof tableName == `undefined` )
     throw new Error( `Must give the name of the DynamoDB table` )
   if ( typeof user == `undefined` )
@@ -195,7 +195,7 @@ const incrementNumberVotes = async ( tableName, user ) => {
  * @param {Object} user      The user to decrement the number of votes they
  *                           have.
  */
-const decrementNumberVotes = async ( tableName, user ) => {
+const decrementNumberUserVotes = async ( tableName, user ) => {
   if ( typeof tableName == `undefined` )
     throw new Error( `Must give the name of the DynamoDB table` )
   if ( typeof user == `undefined` )
@@ -223,7 +223,7 @@ const decrementNumberVotes = async ( tableName, user ) => {
 
 module.exports = {
   addUser,
-  incrementNumberFollows, decrementNumberFollows,
-  incrementNumberComments, decrementNumberComments,
-  incrementNumberVotes, decrementNumberVotes
+  incrementNumberUserFollows, decrementNumberUserFollows,
+  incrementNumberUserComments, decrementNumberUserComments,
+  incrementNumberUserVotes, decrementNumberUserVotes
 }
