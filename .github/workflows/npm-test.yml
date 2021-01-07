@@ -19,20 +19,13 @@ on:
 #       - run: npm ci
 #       - run: npm test
 jobs:
-  vm:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo This job does not specify a container.
-          echo It runs directly on the virtual machine.
-        name: Run on VM
-  container:
-    runs-on: ubuntu-latest
-    container: amazon/dynamodb-local
-    steps:
-      - run: |
-          echo This job does specify a container.
-          echo It runs in the container instead of the VM.
-        name: Run in container
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
       - run: npm ci
       - run: npm test
+        uses: docker::/amazon/dynamodb-local
