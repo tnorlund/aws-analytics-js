@@ -1,6 +1,6 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
-const { incrementNumberPosts } = require( `./incrementNumberPosts` )
+const { incrementNumberPosts } = require( `..` )
 
 /**
  * Adds a post to DynamoDB.

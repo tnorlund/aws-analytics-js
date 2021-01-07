@@ -1,6 +1,6 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
-const { Blog, blogFromItem } = require( `../entities` )
+const { incrementNumberUsers } = require( `..` )
 
 /**
  * Adds a user to DynamoDB.
@@ -24,36 +24,6 @@ const addUserToBlog = async ( tableName, user ) => {
     let errorMessage = `Could not add user to blog`
     if ( error.code === `ConditionalCheckFailedException` )
       errorMessage = `${user.name} is already in DynamoDB`
-    return { 'error': errorMessage }
-  }
-}
-
-/**
- * Increments the number of users in the DynamoDB blog item.
- * @param {String} tableName The name of the DynamoDB table.
- */
-const incrementNumberUsers = async ( tableName ) => {
-  if ( !tableName )
-    throw new Error( `Must give the name of the DynamoDB table` )
-  let blog = new Blog( {} )
-  try {
-    const response = await dynamoDB.updateItem( {
-      TableName: tableName,
-      Key: blog.key(),
-      ConditionExpression: `attribute_exists(PK)`,
-      UpdateExpression: `SET #count = #count + :inc`,
-      ExpressionAttributeNames: { '#count': `NumberUsers` },
-      ExpressionAttributeValues: { ':inc': { 'N': `1` } },
-      ReturnValues: `ALL_NEW`
-    } ).promise()
-    if ( !response.Attributes ) return { 'error': `Could not find blog` }
-    return { 'blog': blogFromItem( response.Attributes ) }
-  } catch( error ) {
-    // eslint-disable-next-line no-console
-    console.log( `ERROR incrementNumberUsers`, error )
-    let errorMessage = `Could not add user to blog`
-    if ( error.code === `ConditionalCheckFailedException` )
-      errorMessage = `Blog does not exist`
     return { 'error': errorMessage }
   }
 }
