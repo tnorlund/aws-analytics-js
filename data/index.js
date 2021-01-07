@@ -1,8 +1,6 @@
-const { addUserToBlog } = require( `./addUserToBlog` )
 const { getUser } = require( `./getUser` )
 const { getUserDetails } = require( `./getUserDetails` )
 const { addTOSToUser } = require( `./addTOStoUser` )
-const { addProjectToBlog } = require( `./addProjectToBlog` )
 const { addFollowToProject } = require( `./addFollowToProject` )
 const { removeFollowFromProject } = require( `./removeFollowFromProject` )
 const { getProject } = require( `./getProject` )
@@ -27,18 +25,29 @@ const {
   incrementNumberProjects, decrementNumberProjects
 } = require( `./blog` )
 
+const {
+  addProject
+} = require( `./project` )
+
+const { 
+  addUser,
+  incrementNumberFollows, decrementNumberFollows
+} = require( `./user` )
+
 module.exports = {
   // Blog
   addBlog, getBlog, updateBlog, resetBlog,
   incrementNumberUsers, decrementNumberUsers,
   incrementNumberPosts, decrementNumberPosts,
   incrementNumberProjects, decrementNumberProjects,
+  // Project
+  addProject,
+  // User
+  addUser, getUser,
+  incrementNumberFollows, decrementNumberFollows,
 
-  addUserToBlog,
-  getUser,
   getUserDetails,
   addTOSToUser,
-  addProjectToBlog,
   addFollowToProject,
   removeFollowFromProject,
   getProject,

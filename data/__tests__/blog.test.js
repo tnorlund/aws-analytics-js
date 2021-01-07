@@ -8,7 +8,7 @@ const { Blog } = require( `../../entities` )
 
 
 describe( `addBlog`, () => {
-  test( `Default blog can be added to the table`, async () => {
+  test( `A default blog can be added to the table`, async () => {
     const blog = new Blog( {} )
     const result = await addBlog( `test-table`, blog )
     expect( result ).toEqual( { 'blog': blog } )
