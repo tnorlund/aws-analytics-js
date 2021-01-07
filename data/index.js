@@ -20,9 +20,9 @@ const { updateUserName } = require( `./updateUserName` )
 
 const {
   addBlog, getBlog, updateBlog, resetBlog,
-  incrementNumberUsers, decrementNumberUsers,
-  incrementNumberPosts, decrementNumberPosts,
-  incrementNumberProjects, decrementNumberProjects
+  incrementNumberBlogUsers, decrementNumberBlogUsers,
+  incrementNumberBlogPosts, decrementNumberBlogPosts,
+  incrementNumberBlogProjects, decrementNumberBlogProjects
 } = require( `./blog` )
 
 const {
@@ -44,9 +44,9 @@ const {
 module.exports = {
   // Blog
   addBlog, getBlog, updateBlog, resetBlog,
-  incrementNumberUsers, decrementNumberUsers,
-  incrementNumberPosts, decrementNumberPosts,
-  incrementNumberProjects, decrementNumberProjects,
+  incrementNumberBlogUsers, decrementNumberBlogUsers,
+  incrementNumberBlogPosts, decrementNumberBlogPosts,
+  incrementNumberBlogProjects, decrementNumberBlogProjects,
   // Project
   addProject,
   // User

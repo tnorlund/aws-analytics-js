@@ -1,8 +1,8 @@
 const { 
   addBlog, getBlog, updateBlog, resetBlog,
-  incrementNumberPosts, decrementNumberPosts, 
-  incrementNumberProjects, decrementNumberProjects,
-  incrementNumberUsers, decrementNumberUsers
+  incrementNumberBlogPosts, decrementNumberBlogPosts, 
+  incrementNumberBlogProjects, decrementNumberBlogProjects,
+  incrementNumberBlogUsers, decrementNumberBlogUsers
 } = require( `..` )
 const { Blog } = require( `../../entities` )
 
@@ -133,158 +133,158 @@ describe( `updateBlog`, () => {
   } )  
 } )
 
-describe( `incrementNumberPosts`, () => {
+describe( `incrementNumberBlogPosts`, () => {
   test( `The number of posts the blog has can be incremented`, async () => { 
     let blog = new Blog( {} )
     await addBlog( `test-table`, blog )
-    const result = await incrementNumberPosts( `test-table` )
+    const result = await incrementNumberBlogPosts( `test-table` )
     blog.numberPosts += 1
     expect( result ).toEqual( { 'blog': blog } )
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
-    const result = await incrementNumberPosts( `test-table` )
+    const result = await incrementNumberBlogPosts( `test-table` )
     expect( result ).toEqual( { 'error': `Blog does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const result = await incrementNumberPosts( `not-a-table` )
+    const result = await incrementNumberBlogPosts( `not-a-table` )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
   
   test( `Throws an error when no table name is given.`, async () => {
     await expect( 
-      incrementNumberPosts()
+      incrementNumberBlogPosts()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )
 
-describe( `decrementNumberPosts`, () => {
+describe( `decrementNumberBlogPosts`, () => {
   test( `The number of posts the blog has can be decremented`, async () => { 
     let blog = new Blog( { numberPosts: 5 } )
     await addBlog( `test-table`, blog )
-    const result = await decrementNumberPosts( `test-table` )
+    const result = await decrementNumberBlogPosts( `test-table` )
     blog.numberPosts -= 1
     expect( result ).toEqual( { 'blog': blog } )
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
-    const result = await decrementNumberPosts( `test-table` )
+    const result = await decrementNumberBlogPosts( `test-table` )
     expect( result ).toEqual( { 'error': `Blog does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const result = await decrementNumberPosts( `not-a-table` )
+    const result = await decrementNumberBlogPosts( `not-a-table` )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
   
   test( `Throws an error when no table name is given.`, async () => {
     await expect( 
-      decrementNumberPosts()
+      decrementNumberBlogPosts()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )
 
-describe( `incrementNumberProjects`, () => {
+describe( `incrementNumberBlogProjects`, () => {
   test( `The number of projects the blog has can be incremented`, async () => { 
     let blog = new Blog( {} )
     await addBlog( `test-table`, blog )
-    const result = await incrementNumberProjects( `test-table` )
+    const result = await incrementNumberBlogProjects( `test-table` )
     blog.numberProjects += 1
     expect( result ).toEqual( { 'blog': blog } )
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
-    const result = await incrementNumberProjects( `test-table` )
+    const result = await incrementNumberBlogProjects( `test-table` )
     expect( result ).toEqual( { 'error': `Blog does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const result = await incrementNumberProjects( `not-a-table` )
+    const result = await incrementNumberBlogProjects( `not-a-table` )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
   
   test( `Throws an error when no table name is given.`, async () => {
     await expect( 
-      incrementNumberProjects()
+      incrementNumberBlogProjects()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )
 
-describe( `decrementNumberProjects`, () => {
+describe( `decrementNumberBlogProjects`, () => {
   test( `The number of projects the blog has can be decremented`, async () => { 
     let blog = new Blog( { numberProjects: 5 } )
     await addBlog( `test-table`, blog )
-    const result = await decrementNumberProjects( `test-table` )
+    const result = await decrementNumberBlogProjects( `test-table` )
     blog.numberProjects -= 1
     expect( result ).toEqual( { 'blog': blog } )
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
-    const result = await decrementNumberProjects( `test-table` )
+    const result = await decrementNumberBlogProjects( `test-table` )
     expect( result ).toEqual( { 'error': `Blog does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const result = await decrementNumberProjects( `not-a-table` )
+    const result = await decrementNumberBlogProjects( `not-a-table` )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
   
   test( `Throws an error when no table name is given.`, async () => {
     await expect( 
-      decrementNumberProjects()
+      decrementNumberBlogProjects()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )
 
-describe( `incrementNumberUsers`, () => {
+describe( `incrementNumberBlogUsers`, () => {
   test( `The number of users the blog has can be incremented`, async () => { 
     let blog = new Blog( {} )
     await addBlog( `test-table`, blog )
-    const result = await incrementNumberUsers( `test-table` )
+    const result = await incrementNumberBlogUsers( `test-table` )
     blog.numberUsers += 1
     expect( result ).toEqual( { 'blog': blog } )
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
-    const result = await incrementNumberUsers( `test-table` )
+    const result = await incrementNumberBlogUsers( `test-table` )
     expect( result ).toEqual( { 'error': `Blog does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const result = await incrementNumberUsers( `not-a-table` )
+    const result = await incrementNumberBlogUsers( `not-a-table` )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
   
   test( `Throws an error when no table name is given.`, async () => {
     await expect( 
-      incrementNumberUsers()
+      incrementNumberBlogUsers()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )
 
-describe( `decrementNumberUsers`, () => {
+describe( `decrementNumberBlogUsers`, () => {
   test( `The number of users the blog has can be decremented`, async () => { 
     const blog = new Blog( { numberUsers: 5, numberPosts: 1 } )
     await addBlog( `test-table`, blog )
-    const result = await decrementNumberUsers( `test-table` )
+    const result = await decrementNumberBlogUsers( `test-table` )
     blog.numberUsers -= 1
     expect( result ).toEqual( { 'blog': blog } )
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
-    const result = await decrementNumberUsers( `test-table` )
+    const result = await decrementNumberBlogUsers( `test-table` )
     expect( result ).toEqual( { 'error': `Blog does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const result = await decrementNumberUsers( `not-a-table` )
+    const result = await decrementNumberBlogUsers( `not-a-table` )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
   
   test( `Throws an error when no table name is given.`, async () => {
     await expect( 
-      decrementNumberUsers()
+      decrementNumberBlogUsers()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )

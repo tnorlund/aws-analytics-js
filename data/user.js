@@ -1,6 +1,6 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
-const { incrementNumberUsers } = require( `./blog` )
+const { incrementNumberBlogUsers } = require( `./blog` )
 const { userFromItem } = require( `../entities` )
 
 /**
@@ -13,7 +13,7 @@ const addUser = async ( tableName, user ) => {
     throw new Error( `Must give the name of the DynamoDB table` )
   if ( typeof user == `undefined` )
     throw new Error( `Must give user` )
-  const { blog, error } = await incrementNumberUsers( tableName )
+  const { blog, error } = await incrementNumberBlogUsers( tableName )
   if ( error ) return { error: error }
   // Set the user's number to the new number of users in the blog.
   user.userNumber = blog.numberUsers

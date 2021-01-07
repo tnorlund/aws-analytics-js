@@ -141,7 +141,7 @@ const resetBlog = async ( tableName ) => {
  * Increments the number of users in the DynamoDB blog item.
  * @param {String} tableName The name of the DynamoDB table.
  */
-const incrementNumberUsers = async ( tableName ) => {
+const incrementNumberBlogUsers = async ( tableName ) => {
   if ( !tableName )
     throw new Error( `Must give the name of the DynamoDB table` )
   let blog = new Blog( {} )
@@ -170,7 +170,7 @@ const incrementNumberUsers = async ( tableName ) => {
  * Decrements the number of users in the DynamoDB blog item.
  * @param {String} tableName The name of the DynamoDB table.
  */
-const decrementNumberUsers = async ( tableName ) => {
+const decrementNumberBlogUsers = async ( tableName ) => {
   if ( !tableName )
     throw new Error( `Must give the name of the DynamoDB table` )
   let blog = new Blog( {} )
@@ -199,7 +199,7 @@ const decrementNumberUsers = async ( tableName ) => {
  * Increments the number of posts in the DynamoDB blog item.
  * @param {String} tableName The name of the DynamoDB table.
  */
-const incrementNumberPosts = async ( tableName ) => {
+const incrementNumberBlogPosts = async ( tableName ) => {
   if ( !tableName )
     throw new Error( `Must give the name of the DynamoDB table` )
   let blog = new Blog( {} )
@@ -228,7 +228,7 @@ const incrementNumberPosts = async ( tableName ) => {
  * Decrements the number of posts in the DynamoDB blog item.
  * @param {String} tableName The name of the DynamoDB table.
  */
-const decrementNumberPosts = async ( tableName ) => {
+const decrementNumberBlogPosts = async ( tableName ) => {
   if ( !tableName )
     throw new Error( `Must give the name of the DynamoDB table` )
   let blog = new Blog( {} )
@@ -257,7 +257,7 @@ const decrementNumberPosts = async ( tableName ) => {
  * Increments the number of projects in the DynamoDB blog item.
  * @param {String} tableName The name of the DynamoDB table.
  */
-const incrementNumberProjects = async ( tableName ) => {
+const incrementNumberBlogProjects = async ( tableName ) => {
   if ( !tableName )
     throw new Error( `Must give the name of the DynamoDB table` )
   let blog = new Blog( {} )
@@ -286,7 +286,7 @@ const incrementNumberProjects = async ( tableName ) => {
  * Decrements the number of projects in the DynamoDB blog item.
  * @param {String} tableName The name of the DynamoDB table.
  */
-const decrementNumberProjects = async ( tableName ) => {
+const decrementNumberBlogProjects = async ( tableName ) => {
   if ( !tableName )
     throw new Error( `Must give the name of the DynamoDB table` )
   let blog = new Blog( {} )
@@ -313,7 +313,7 @@ const decrementNumberProjects = async ( tableName ) => {
 
 module.exports = {
   addBlog, getBlog, updateBlog, resetBlog,
-  incrementNumberUsers, decrementNumberUsers,
-  incrementNumberPosts, decrementNumberPosts,
-  incrementNumberProjects, decrementNumberProjects
+  incrementNumberBlogUsers, decrementNumberBlogUsers,
+  incrementNumberBlogPosts, decrementNumberBlogPosts,
+  incrementNumberBlogProjects, decrementNumberBlogProjects
 }
