@@ -101,6 +101,7 @@ const userFromItem = ( item ) => {
     dateJoined: item.DateJoined.S,
     numberComments: item.NumberComments.N,
     numberVotes: item.NumberVotes.N,
+    numberFollows: item.NumberFollows.N,
     totalKarma: item.TotalKarma.N
   } )
 }
