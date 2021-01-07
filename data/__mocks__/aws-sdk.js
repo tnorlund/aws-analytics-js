@@ -1,15 +1,23 @@
 const AWS = require( `aws-sdk` )
 
+/**
+ * In order to properly mock AWS locally, the AWS config needs to be set
+ * properly. This means setting the region to `local` and pointing the endpoint
+ * to docker. Docker defaults to port 8000.
+ */
 AWS.config.update( {
   region: `local`,
   endpoint: `http://localhost:8000`,
 } )
 
-beforeEach( 
+/**
+ * Before each test, the table needs to be created. This is to ensure that each
+ * test has the same, clean environment to conduct its tests in.
+ */
+beforeEach(
   async () => {
     try {
-      const client = new AWS.DynamoDB()
-      await client.createTable( {
+      await new AWS.DynamoDB().createTable( {
         TableName: `test-table`,
         KeySchema: [
           { 'AttributeName': `PK`, 'KeyType': `HASH` },
@@ -23,7 +31,7 @@ beforeEach(
           { 'AttributeName': `GSI2PK`, 'AttributeType': `S` },
           { 'AttributeName': `GSI2SK`, 'AttributeType': `S` }
         ],
-        ProvisionedThroughput: {ReadCapacityUnits: 5, WriteCapacityUnits: 5},
+        ProvisionedThroughput: { ReadCapacityUnits: 5, WriteCapacityUnits: 5 },
         GlobalSecondaryIndexes:[
           {
             'IndexName': `GSI1`,
@@ -56,6 +64,10 @@ beforeEach(
     }
   } )
 
+/**
+ * After each test, the table needs to be deleted. This is to ensure that there
+ * are no problems when the table is constructed for the following test.
+ */
 afterEach(
   async () => {
     try {
