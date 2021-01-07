@@ -12,7 +12,6 @@ describe( `addProject`, () => {
     } )
     await addBlog( `test-table`, blog )
     const result = await addProject( `test-table`, project )
-    blog.numberProjects += 1
     expect( result ).toEqual( { project } )
   } )
 
@@ -24,7 +23,6 @@ describe( `addProject`, () => {
     await addBlog( `test-table`, blog )
     await addProject( `test-table`, project )
     const result = await addProject( `test-table`, project )
-    blog.numberProjects += 1
     expect( result ).toEqual( {
       error: `Could not add '${ project.title}' to table`
     } )
@@ -43,7 +41,7 @@ describe( `addProject`, () => {
   test( `Throws an error when no project object is given`, async () => {
     await expect(
       addProject( `test-table` )
-    ).rejects.toThrow( `Must give blog` )
+    ).rejects.toThrow( `Must give project` )
   } )
 
   test( `Throws an error when no table name is given.`, async () => {

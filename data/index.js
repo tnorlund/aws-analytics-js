@@ -29,6 +29,11 @@ const {
   addProject
 } = require( `./project` )
 
+const {
+  addPost,
+  incrementNumberPostComments, decrementNumberPostComments
+} = require( `./post` )
+
 const { 
   addUser,
   incrementNumberFollows, decrementNumberFollows,
@@ -49,6 +54,9 @@ module.exports = {
   incrementNumberFollows, decrementNumberFollows,
   incrementNumberComments, decrementNumberComments,
   incrementNumberVotes, decrementNumberVotes,
+  // Post
+  addPost,
+  incrementNumberPostComments, decrementNumberPostComments,
 
   getUserDetails,
   addTOSToUser,

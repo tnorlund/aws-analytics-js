@@ -11,7 +11,7 @@ const addProject = async ( tableName, project ) => {
   if ( typeof tableName == `undefined` ) 
     throw Error( `Must give the name of the DynamoDB table` )
   if ( typeof project == `undefined` )
-    throw new Error( `Must give blog` )
+    throw new Error( `Must give project` )
   const blog = new Blog( {} )
   try {
     await dynamoDB.transactWriteItems( {
