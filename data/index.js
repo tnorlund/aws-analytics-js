@@ -1,5 +1,6 @@
 const { createBlog } = require( `./createBlog` )
 const { resetBlog } = require( `./resetBlog` )
+const { incrementNumberPosts } = require( `./incrementNumberPosts` )
 const { addUserToBlog } = require( `./addUserToBlog` )
 const { getBlog } = require( `./getBlog` )
 const { getUser } = require( `./getUser` )
@@ -27,6 +28,7 @@ module.exports = {
   addUserToBlog,
   createBlog,
   getBlog,
+  incrementNumberPosts,
   getUser,
   resetBlog,
   getUserDetails,

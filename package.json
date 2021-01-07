@@ -4,7 +4,7 @@
   "description": "A package for accessing the Blog DB using Node.",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "repository": {
     "type": "git",
@@ -23,8 +23,7 @@
   },
   "jest": {
     "verbose": true,
-    "collectCoverage": true,
-    "runInBand": true
+    "collectCoverage": true
   },
   "dependencies": {
     "aws-sdk": "^2.821.0"

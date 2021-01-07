@@ -8,8 +8,10 @@ const dynamoDB = new AWS.DynamoDB()
  * @returns {Map}              Whether the blog was added to the DB.
  */
 const createBlog = async ( tableName, blog ) => {
-  if ( typeof tableName === `undefined` ) 
+  if ( typeof tableName == `undefined` ) 
     throw new Error( `Must give the name of the DynamoDB table` )
+  if ( typeof blog == `undefined` )
+    throw new Error( `Must give blog` )
   try {
     await dynamoDB.putItem( {
       TableName: tableName,

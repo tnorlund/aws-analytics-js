@@ -2,12 +2,6 @@ const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
 const { ProjectFollow } = require( `../entities` )
 
-// TODO
-// [ ] Remove user's Project Follow
-// [ ] Recount the numbers of the Project's Follows
-// [ ]   - Get the Project's Follows
-// [ ]   - Set the correct counts for each Project's Follows
-
 const removeFollowFromProject = async ( tableName, user, project ) => {
   if ( !tableName ) throw Error( `Must give the name of the DynamoDB table` )
   try {
@@ -106,7 +100,7 @@ const decrementNumberUserFollows = async ( tableName, user ) => {
     user.numberFollows = String(
       parseInt( response.Attributes.NumberFollows.N ) + 1
     )
-    // Send the original back to esnure the correct keys are set.
+    // Send the original back to ensure the correct keys are set.
     return { 'userResponse': user }
   } catch( error ) {
     let errorMessage = `Could not unfollow project`
