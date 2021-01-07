@@ -157,8 +157,73 @@ const decrementNumberComments = async ( tableName, user ) => {
   }
 }
 
+/**
+ * Increments a user's number of votes in DynamoDB.
+ * @param {String} tableName The name of the DynamoDB table.
+ * @param {Object} user      The user to increment the number of votes they
+ *                           have.
+ */
+const incrementNumberVotes = async ( tableName, user ) => {
+  if ( typeof tableName == `undefined` )
+    throw new Error( `Must give the name of the DynamoDB table` )
+  if ( typeof user == `undefined` )
+    throw new Error( `Must give user` )
+  try {
+    const response = await dynamoDB.updateItem( {
+      TableName: tableName,
+      Key: user.key(),
+      ConditionExpression: `attribute_exists(PK)`,
+      UpdateExpression: `SET #count = #count + :inc`,
+      ExpressionAttributeNames: { '#count': `NumberVotes` },
+      ExpressionAttributeValues: { ':inc': { 'N': `1` } },
+      ReturnValues: `ALL_NEW`
+    } ).promise()
+    return { 'user': userFromItem( response.Attributes ) }
+  } catch( error ) {
+    let errorMessage = `Could not increment votes`
+    if ( error.code === `ConditionalCheckFailedException` )
+      errorMessage = `User does not exist`
+    if ( error.code == `ResourceNotFoundException` )
+      errorMessage = `Table does not exist`
+    return { 'error': errorMessage }
+  }
+}
+
+/**
+ * Decrements a user's number of votes in DynamoDB.
+ * @param {String} tableName The name of the DynamoDB table.
+ * @param {Object} user      The user to decrement the number of votes they
+ *                           have.
+ */
+const decrementNumberVotes = async ( tableName, user ) => {
+  if ( typeof tableName == `undefined` )
+    throw new Error( `Must give the name of the DynamoDB table` )
+  if ( typeof user == `undefined` )
+    throw new Error( `Must give user` )
+  try {
+    const response = await dynamoDB.updateItem( {
+      TableName: tableName,
+      Key: user.key(),
+      ConditionExpression: `attribute_exists(PK)`,
+      UpdateExpression: `SET #count = #count - :dec`,
+      ExpressionAttributeNames: { '#count': `NumberVotes` },
+      ExpressionAttributeValues: { ':dec': { 'N': `1` } },
+      ReturnValues: `ALL_NEW`
+    } ).promise()
+    return { 'user': userFromItem( response.Attributes ) }
+  } catch( error ) {
+    let errorMessage = `Could not decrement comments`
+    if ( error.code === `ConditionalCheckFailedException` )
+      errorMessage = `User does not exist`
+    if ( error.code == `ResourceNotFoundException` )
+      errorMessage = `Table does not exist`
+    return { 'error': errorMessage }
+  }
+}
+
 module.exports = {
   addUser,
   incrementNumberFollows, decrementNumberFollows,
-  incrementNumberComments, decrementNumberComments
+  incrementNumberComments, decrementNumberComments,
+  incrementNumberVotes, decrementNumberVotes
 }
