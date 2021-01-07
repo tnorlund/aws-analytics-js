@@ -11,8 +11,9 @@
     "rules": {
         "indent": ["error", 2, { "SwitchCase": 1 }],
         "quotes": ["error", "backtick", { "avoidEscape": true }],
-        "max-len": ["error", { "comments": 80 }],
-        "space-in-parens": ["error", "always"]
+        "max-len": ["error", { "comments": 80  }],
+        "space-in-parens": ["error", "always"],
+        "object-curly-spacing": ["error", "always"]
     },
     "overrides": [ 
         {
