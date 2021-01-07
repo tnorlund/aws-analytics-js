@@ -45,13 +45,13 @@ describe( `addUser`, () => {
 describe( `incrementNumberFollows`, () => {
   test( `The number of follows the user has can be incremented`, async () => { 
     let blog = new Blog( {} )
-    let user = new User( {
-      name: `Tyler`, email: `me@me.com`
+    const user = new User( {
+      name: `Tyler`, email: `me@me.com`, numberFollows: 0
     } )
     await addBlog( `test-table`, blog )
     let result = await addUser( `test-table`, user )
     result = await incrementNumberFollows( `test-table`, result.user )
-    expect( result ).toEqual( { user } )
+    expect( result.user ).toEqual( { ...user, numberFollows: 1 } )
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
@@ -86,17 +86,17 @@ describe( `incrementNumberFollows`, () => {
 describe( `decrementNumberFollows`, () => {
   test( `The number of follows the user has can be decremented`, async () => { 
     let blog = new Blog( {} )
-    let user = new User( {
-      name: `Tyler`, email: `me@me.com`
+    const user = new User( {
+      name: `Tyler`, email: `me@me.com`, numberFollows: 1
     } )
     await addBlog( `test-table`, blog )
     let result = await addUser( `test-table`, user )
     result = await decrementNumberFollows( `test-table`, result.user )
-    expect( result ).toEqual( { user } )
+    expect( result.user ).toEqual( { ...user, numberFollows: 0 } )
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
-    let user = new User( {
+    const user = new User( {
       name: `Tyler`, email: `me@me.com`
     } )
     const result = await decrementNumberFollows( `test-table`, user )
@@ -104,7 +104,7 @@ describe( `decrementNumberFollows`, () => {
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    let user = new User( {
+    const user = new User( {
       name: `Tyler`, email: `me@me.com`
     } )
     const result = await decrementNumberFollows( `not-a-table`, user )
