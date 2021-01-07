@@ -1,11 +1,6 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
-const { incrementNumberProjects } = require( `./blog` ) 
-// const { 
-//   Blog, blogFromItem,
-//   Project, projectFromItem
-// } = require( `../entities` )
-
+const { Blog } = require( `../entities` )
 
 /**
  * Adds a project to DynamoDB.
@@ -17,19 +12,37 @@ const addProject = async ( tableName, project ) => {
     throw Error( `Must give the name of the DynamoDB table` )
   if ( typeof project == `undefined` )
     throw new Error( `Must give blog` )
-  const { error, blog } = await incrementNumberProjects( tableName )
-  if ( error ) return { error: error }
+  const blog = new Blog( {} )
   try {
-    await dynamoDB.putItem( {
-      TableName: tableName,
-      Item: project.toItem(),
-      ConditionExpression: `attribute_not_exists(PK)`
+    await dynamoDB.transactWriteItems( {
+      TransactItems: [
+        {
+          Update: {
+            TableName: tableName,
+            Key: blog.key(),
+            ConditionExpression: `attribute_exists(PK)`,
+            UpdateExpression: `SET #count = #count + :inc`,
+            ExpressionAttributeNames: { '#count': `NumberProjects` },
+            ExpressionAttributeValues: { ':inc': { 'N': `1` } },
+            ReturnValuesOnConditionCheckFailure: `ALL_OLD`
+          },
+        },
+        {
+          Put: {
+            TableName: tableName,
+            Item: project.toItem(),
+            ConditionExpression: `attribute_not_exists(PK)`
+          }
+        }
+      ]
     } ).promise()
-    return { project, blog }
+    return { project }
   } catch( error ) {
     let errorMessage = `Could not add project to blog`
-    if ( error.code === `ConditionalCheckFailedException` )
-      errorMessage = `'${project.title}' already exists`
+    if ( error.code === `TransactionCanceledException` )
+      errorMessage = `Could not add '${project.title}' to table`
+    if ( error.code == `ResourceNotFoundException` )
+      errorMessage = `Table does not exist`
     return { 'error': errorMessage }
   }
 }

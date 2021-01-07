@@ -13,7 +13,7 @@ describe( `addProject`, () => {
     await addBlog( `test-table`, blog )
     const result = await addProject( `test-table`, project )
     blog.numberProjects += 1
-    expect( result ).toEqual( { blog, project } )
+    expect( result ).toEqual( { project } )
   } )
 
   test( `Returns an error when the project is in the table`, async () => {
@@ -25,7 +25,9 @@ describe( `addProject`, () => {
     await addProject( `test-table`, project )
     const result = await addProject( `test-table`, project )
     blog.numberProjects += 1
-    expect( result ).toEqual( { error: `'${ project.title}' already exists` } )
+    expect( result ).toEqual( {
+      error: `Could not add '${ project.title}' to table`
+    } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
