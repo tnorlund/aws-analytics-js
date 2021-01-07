@@ -5,7 +5,7 @@ const { ProjectFollow } = require( `../entities` )
 /**
  * Adds a project's follow to DynamoDB.
  * @param {String} tableName The name of the DynamoDB table.
- * @param {Object} project   The project to add.
+ * @param {Object} user      The project to add.
  */
 const addFollowToProject = async ( tableName, user, project ) => {
   if ( !tableName ) throw Error( `Must give the name of the DynamoDB table` )

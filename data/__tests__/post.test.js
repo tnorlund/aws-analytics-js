@@ -50,4 +50,3 @@ describe( `addPost`, () => {
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )
-
