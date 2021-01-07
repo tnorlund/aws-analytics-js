@@ -31,7 +31,8 @@ const {
 
 const { 
   addUser,
-  incrementNumberFollows, decrementNumberFollows
+  incrementNumberFollows, decrementNumberFollows,
+  incrementNumberComments, decrementNumberComments
 } = require( `./user` )
 
 module.exports = {
@@ -45,6 +46,7 @@ module.exports = {
   // User
   addUser, getUser,
   incrementNumberFollows, decrementNumberFollows,
+  incrementNumberComments, decrementNumberComments,
 
   getUserDetails,
   addTOSToUser,

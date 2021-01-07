@@ -110,7 +110,7 @@ const incrementNumberComments = async ( tableName, user ) => {
       Key: user.key(),
       ConditionExpression: `attribute_exists(PK)`,
       UpdateExpression: `SET #count = #count + :inc`,
-      ExpressionAttributeNames: { '#count': `NumberFollows` },
+      ExpressionAttributeNames: { '#count': `NumberComments` },
       ExpressionAttributeValues: { ':inc': { 'N': `1` } },
       ReturnValues: `ALL_NEW`
     } ).promise()
@@ -142,7 +142,7 @@ const decrementNumberComments = async ( tableName, user ) => {
       Key: user.key(),
       ConditionExpression: `attribute_exists(PK)`,
       UpdateExpression: `SET #count = #count - :dec`,
-      ExpressionAttributeNames: { '#count': `NumberFollows` },
+      ExpressionAttributeNames: { '#count': `NumberComments` },
       ExpressionAttributeValues: { ':dec': { 'N': `1` } },
       ReturnValues: `ALL_NEW`
     } ).promise()

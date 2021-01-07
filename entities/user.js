@@ -81,7 +81,7 @@ class User {
       'Email': variableToItemAttribute( this.email ),
       'DateJoined': variableToItemAttribute( this.dateJoined ),
       'NumberFollows': variableToItemAttribute( this.numberFollows ),
-      'NumberComments': variableToItemAttribute( this.numberVotes ),
+      'NumberComments': variableToItemAttribute( this.numberComments ),
       'NumberVotes': variableToItemAttribute( this.numberVotes ),
       'TotalKarma': variableToItemAttribute( this.totalKarma )
     }
