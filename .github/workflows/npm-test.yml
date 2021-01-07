@@ -1,23 +1,9 @@
-# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
-# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
-
-name: Node.js Package
+name: Test node package
 
 on:
   push:
     branches:
       - "main"
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
-#       - uses: actions/setup-node@v1
-#         with:
-#           node-version: 12
-#       - run: npm ci
-#       - run: npm test
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,14 +12,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - run: npm ci
+      - name: NPM clean install
+        run: npm ci
       - name: Setup DynamoDB Local
         uses: rrainn/dynamodb-action@v2.0.0
         with:
-          # dbPath: # undefined by default, if this is undefined inMemory will be used
-          # sharedDb: # undefined by default
-          # delayTransientStatuses: # undefined by default
-          # optimizeDbBeforeStartup: # undefined by default
           port: 8000
           cors: '*'
       - run: npm test
