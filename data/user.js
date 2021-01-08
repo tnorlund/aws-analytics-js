@@ -30,6 +30,31 @@ const addUser = async ( tableName, user ) => {
 }
 
 /**
+ * Retrieves the user from DynamoDB.
+ * @param {String} tableName The name of the DynamoDB table.
+ * @param {Object} user      The user requested.
+ */
+const getUser = async ( tableName, user ) => {
+  if ( typeof tableName == `undefined` )
+    throw new Error( `Must give the name of the DynamoDB table` )
+  if ( typeof user == `undefined` )
+    throw new Error( `Must give user` )
+  try {
+    const result = await dynamoDB.getItem( {
+      TableName: tableName,
+      Key: user.key()
+    } ).promise()
+    if ( !result.Item ) return { error: `User does not exist` }
+    return { user: userFromItem( result.Item ) }
+  } catch( error ) {
+    let errorMessage = `Could not get user`
+    if ( error.code == `ResourceNotFoundException` )
+      errorMessage = `Table does not exist`
+    return { 'error': errorMessage }
+  }
+}
+
+/**
  * Increments a user's number of projects that they follow in DynamoDB.
  * @param {String} tableName The name of the DynamoDB table.
  * @param {Object} user      The user to increment the number of projects they
@@ -222,7 +247,7 @@ const decrementNumberUserVotes = async ( tableName, user ) => {
 }
 
 module.exports = {
-  addUser,
+  addUser, getUser,
   incrementNumberUserFollows, decrementNumberUserFollows,
   incrementNumberUserComments, decrementNumberUserComments,
   incrementNumberUserVotes, decrementNumberUserVotes

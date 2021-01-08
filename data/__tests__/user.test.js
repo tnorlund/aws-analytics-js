@@ -1,6 +1,6 @@
 const {
   addBlog,
-  addUser, 
+  addUser, getUser,
   incrementNumberUserFollows, decrementNumberUserFollows,
   incrementNumberUserComments, decrementNumberUserComments,
   incrementNumberUserVotes, decrementNumberUserVotes
@@ -40,6 +40,49 @@ describe( `addUser`, () => {
   test( `Throws an error when no table name is given.`, async () => {
     await expect(
       addUser()
+    ).rejects.toThrow( `Must give the name of the DynamoDB table` )
+  } )
+} )
+
+describe( `getUser`, () => {
+  test( `A user can be queried from to the table`, async () => {
+    let blog = new Blog( {} )
+    const user = new User( {
+      name: `Tyler`, email: `me@me.com`
+    } )
+    await addBlog( `test-table`, blog )
+    await addUser( `test-table`, user )
+    const result = await getUser( `test-table`, user )
+    blog.numberUsers += 1
+    user.userNumber = blog.numberUsers
+    expect( result ).toEqual( { user } )
+  } )  
+
+  test( `Returns error when the user does not exist`, async () => {
+    const user = new User( {
+      name: `Tyler`, email: `me@me.com`
+    } )
+    const result = await getUser( `test-table`, user )
+    expect( result ).toEqual( { 'error': `User does not exist` } )
+  } )
+
+  test( `Returns error when the table does not exist`, async () => {
+    const user = new User( {
+      name: `Tyler`, email: `me@me.com`
+    } )
+    const result = await getUser( `table-not-exist`, user )
+    expect( result ).toEqual( { 'error': `Table does not exist` } )
+  } )
+
+  test( `Throws an error when no user object is given`, async () => {
+    await expect(
+      getUser( `test-table` )
+    ).rejects.toThrow( `Must give user` )
+  } )
+  
+  test( `Throws an error when no table name is given.`, async () => {
+    await expect(
+      getUser()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )

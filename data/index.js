@@ -1,4 +1,4 @@
-const { getUser } = require( `./getUser` )
+// const { getUser } = require( `./getUser` )
 const { getUserDetails } = require( `./getUserDetails` )
 const { addTOSToUser } = require( `./addTOStoUser` )
 const { addFollowToProject } = require( `./addFollowToProject` )
@@ -39,7 +39,7 @@ const {
 } = require( `./post` )
 
 const { 
-  addUser,
+  addUser, getUser,
   incrementNumberUserFollows, decrementNumberUserFollows,
   incrementNumberUserComments, decrementNumberUserComments,
   incrementNumberUserVotes, decrementNumberUserVotes
