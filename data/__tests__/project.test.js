@@ -1,9 +1,9 @@
 const {
-  addProject, getProject,
+  addBlog, addUser, addProjectFollow,
+  addProject, getProject, getProjectDetails,
   incrementNumberProjectFollows, decrementNumberProjectFollows,
-  addBlog
 } = require( `..` )
-const { Blog, Project } = require( `../../entities` )
+const { Blog, User, Project, ProjectFollow } = require( `../../entities` )
 
 describe( `addProject`, () => {
   test( `A project can be added from to the table`, async () => {
@@ -89,6 +89,62 @@ describe( `getProject`, () => {
   test( `Throws an error when no table name is given.`, async () => {
     await expect(
       getProject()
+    ).rejects.toThrow( `Must give the name of the DynamoDB table` )
+  } )
+} )
+
+describe( `getProjectDetails`, () => {
+  test( `A project's details can be queried from to the table`, async () => {
+    const blog = new Blog( {} )
+    const user = new User( {
+      name: `Tyler`, email: `me@me.com`
+    } )
+    let project = new Project( {
+      slug: `/`, title: `Tyler Norlund`
+    } )
+    const projectFollow = new ProjectFollow( {
+      userName: `Tyler`, userNumber: 1, userFollowNumber: 1, email: `me@me.com`,
+      slug: `/`, title: `Tyler Norlund`, projectFollowNumber: 1
+    } )
+    await addBlog( `test-table`, blog )
+    const user_response = await addUser( `test-table`, user )
+    const project_response = await addProject( `test-table`, project )
+    await addProjectFollow( 
+      `test-table`, user_response.user, project_response.project 
+    )
+    project.numberFollows += 1
+    let result = await getProjectDetails( `test-table`, project )
+    expect( { ...result.project } ).toEqual( project )
+    expect( { 
+      ...result.followers[0], dateFollowed: undefined 
+    } ).toEqual( { ...projectFollow, dateFollowed: undefined } )
+  } )
+
+  test( `Returns error when no project is in the table`, async () => {
+    const project = new Project( {
+      slug: `/`, title: `Tyler Norlund`
+    } )
+    const result = await getProjectDetails( `test-table`, project )
+    expect( result ).toEqual( { 'error': `Project does not exist` } )
+  } )
+
+  test( `Returns error when the table does not exist`, async () => {
+    const project = new Project( {
+      slug: `/`, title: `Tyler Norlund`
+    } )
+    const result = await getProjectDetails( `not-a-table`, project )
+    expect( result ).toEqual( { 'error': `Table does not exist` } )
+  } )
+
+  test( `Throws an error when no project object is given`, async () => {
+    await expect(
+      getProjectDetails( `test-table` )
+    ).rejects.toThrow( `Must give project` )
+  } )
+
+  test( `Throws an error when no table name is given.`, async () => {
+    await expect(
+      getProjectDetails()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )
