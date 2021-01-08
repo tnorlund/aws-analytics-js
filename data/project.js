@@ -48,6 +48,31 @@ const addProject = async ( tableName, project ) => {
 }
 
 /**
+ * Retrieves the project from DynamoDB.
+ * @param {String} tableName The name of the DynamoDB table.
+ * @param {Object} project   The project requested.
+ */
+const getProject = async ( tableName, project ) => {
+  if ( typeof tableName == `undefined` ) 
+    throw Error( `Must give the name of the DynamoDB table` )
+  if ( typeof project == `undefined` )
+    throw new Error( `Must give project` )
+  try {
+    const result = await dynamoDB.getItem( {
+      TableName: tableName,
+      Key: project.key()
+    } ).promise()
+    if ( !result.Item ) return { error: `Project does not exist` }
+    else return { project: projectFromItem( result.Item ) }
+  } catch( error ) {
+    let errorMessage = `Could not get project`
+    if ( error.code == `ResourceNotFoundException` )
+      errorMessage = `Table does not exist`
+    return { error: errorMessage }
+  }
+}
+
+/**
  * Increments the number of follows in the DynamoDB project item.
  * @param {String} tableName The name of the DynamoDB table.
  * @param {Object} project   The project to increment the number of follows.
@@ -110,6 +135,6 @@ const decrementNumberProjectFollows = async ( tableName, project ) => {
 }
 
 module.exports = {
-  addProject,
+  addProject, getProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows
 }

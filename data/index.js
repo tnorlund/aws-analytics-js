@@ -1,9 +1,6 @@
-// const { getUser } = require( `./getUser` )
 const { getUserDetails } = require( `./getUserDetails` )
 const { addTOSToUser } = require( `./addTOStoUser` )
 const { addFollowToProject } = require( `./addFollowToProject` )
-const { removeFollowFromProject } = require( `./removeFollowFromProject` )
-const { getProject } = require( `./getProject` )
 const { getPost } = require( `./getPost` )
 const { getProjectDetails } = require( `./getProjectDetails` )
 const { removeProject } = require( `./removeProject` )
@@ -25,12 +22,12 @@ const {
 } = require( `./blog` )
 
 const {
-  addProject,
+  addProject, getProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows
 } = require( `./project` )
 
 const { 
-  addProjectFollow 
+  addProjectFollow, removeProjectFollow
 } = require( `./projectFollow` )
 
 const {
@@ -52,10 +49,10 @@ module.exports = {
   incrementNumberBlogPosts, decrementNumberBlogPosts,
   incrementNumberBlogProjects, decrementNumberBlogProjects,
   // Project
-  addProject,
+  addProject, getProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows,
   // Project Follow
-  addProjectFollow,
+  addProjectFollow, removeProjectFollow,
   // User
   addUser, getUser,
   incrementNumberUserFollows, decrementNumberUserFollows,
@@ -68,8 +65,6 @@ module.exports = {
   getUserDetails,
   addTOSToUser,
   addFollowToProject,
-  removeFollowFromProject,
-  getProject,
   getPost,
   getProjectDetails,
   removeProject,
