@@ -29,6 +29,10 @@ const {
   incrementNumberProjectFollows, decrementNumberProjectFollows
 } = require( `./project` )
 
+const { 
+  addProjectFollow 
+} = require( `./projectFollow` )
+
 const {
   addPost,
   incrementNumberPostComments, decrementNumberPostComments
@@ -50,6 +54,8 @@ module.exports = {
   // Project
   addProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows,
+  // Project Follow
+  addProjectFollow,
   // User
   addUser, getUser,
   incrementNumberUserFollows, decrementNumberUserFollows,

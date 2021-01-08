@@ -72,7 +72,7 @@ const incrementNumberPostComments = async ( tableName, post ) => {
   } catch( error ) {
     let errorMessage = `Could not increment number of post comments`
     if ( error.code === `ConditionalCheckFailedException` )
-      errorMessage = `Blog does not exist`
+      errorMessage = `Post does not exist`
     if ( error.code == `ResourceNotFoundException` )
       errorMessage = `Table does not exist`
     return { 'error': errorMessage }
@@ -103,7 +103,7 @@ const decrementNumberPostComments = async ( tableName, post ) => {
   } catch( error ) {
     let errorMessage = `Could not decrement number of post comments`
     if ( error.code === `ConditionalCheckFailedException` )
-      errorMessage = `Blog does not exist`
+      errorMessage = `Post does not exist`
     if ( error.code == `ResourceNotFoundException` )
       errorMessage = `Table does not exist`
     return { 'error': errorMessage }

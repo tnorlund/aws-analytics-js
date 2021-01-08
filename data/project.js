@@ -71,7 +71,7 @@ const incrementNumberProjectFollows = async ( tableName, project ) => {
   } catch( error ) {
     let errorMessage = `Could not increment number of project follows`
     if ( error.code === `ConditionalCheckFailedException` )
-      errorMessage = `Blog does not exist`
+      errorMessage = `Project does not exist`
     if ( error.code == `ResourceNotFoundException` )
       errorMessage = `Table does not exist`
     return { 'error': errorMessage }
@@ -102,7 +102,7 @@ const decrementNumberProjectFollows = async ( tableName, project ) => {
   } catch( error ) {
     let errorMessage = `Could not decrement number of project follows`
     if ( error.code === `ConditionalCheckFailedException` )
-      errorMessage = `Blog does not exist`
+      errorMessage = `Project does not exist`
     if ( error.code == `ResourceNotFoundException` )
       errorMessage = `Table does not exist`
     return { 'error': errorMessage }

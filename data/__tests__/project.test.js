@@ -64,12 +64,12 @@ describe( `incrementNumberProjectFollows`, () => {
     expect( result.project ).toEqual( project )
   } )
 
-  test( `Returns error when no blog is in the table`, async () => {
+  test( `Returns error when no project is in the table`, async () => {
     const project = new Project( {
       slug: `/`, title: `Tyler Norlund`
     } )
     const result = await incrementNumberProjectFollows( `test-table`, project )
-    expect( result ).toEqual( { 'error': `Blog does not exist` } )
+    expect( result ).toEqual( { 'error': `Project does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
@@ -107,12 +107,12 @@ describe( `decrementNumberProjectFollows`, () => {
     expect( result.project ).toEqual( project )
   } )
 
-  test( `Returns error when no blog is in the table`, async () => {
+  test( `Returns error when no project is in the table`, async () => {
     const project = new Project( {
       slug: `/`, title: `Tyler Norlund`
     } )
     const result = await decrementNumberProjectFollows( `test-table`, project )
-    expect( result ).toEqual( { 'error': `Blog does not exist` } )
+    expect( result ).toEqual( { 'error': `Project does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
