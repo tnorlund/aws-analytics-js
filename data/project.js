@@ -1,7 +1,7 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
 const {
-  Blog, projectFromItem, projectFollowFromItem 
+  Blog, User, projectFromItem, projectFollowFromItem
 } = require( `../entities` )
 
 /**
@@ -10,7 +10,7 @@ const {
  * @param {Object} project   The project to add.
  */
 const addProject = async ( tableName, project ) => {
-  if ( typeof tableName == `undefined` ) 
+  if ( typeof tableName == `undefined` )
     throw Error( `Must give the name of the DynamoDB table` )
   if ( typeof project == `undefined` ) throw new Error( `Must give project` )
   const blog = new Blog( {} )
@@ -54,7 +54,7 @@ const addProject = async ( tableName, project ) => {
  * @param {Object} project   The project requested.
  */
 const getProject = async ( tableName, project ) => {
-  if ( typeof tableName == `undefined` ) 
+  if ( typeof tableName == `undefined` )
     throw Error( `Must give the name of the DynamoDB table` )
   if ( typeof project == `undefined` ) throw new Error( `Must give project` )
   try {
@@ -78,7 +78,7 @@ const getProject = async ( tableName, project ) => {
  * @param {Object} user      The user requested.
  */
 const getProjectDetails = async ( tableName, project ) => {
-  if ( typeof tableName == `undefined` ) 
+  if ( typeof tableName == `undefined` )
     throw Error( `Must give the name of the DynamoDB table` )
   if ( typeof project == `undefined` ) throw new Error( `Must give project` )
   try {
@@ -145,6 +145,71 @@ const updateProject = async ( tableName, project ) => {
 }
 
 /**
+ * Removes the project and its follows from the table.
+ * @param   {String}  tableName The name of the DynamoDB table.
+ * @param   {Project} project   The project to be removed.
+ * @returns {Map}               The project and follows removed from the table.
+ */
+const removeProject = async ( tableName, project ) => {
+  if ( typeof tableName ==  `undefined` )
+    throw new Error( `Must give the name of the DynamoDB table` )
+  if ( typeof project ==  `undefined` )
+    throw new Error( `Must give project` )
+
+  const project_details = await getProjectDetails( tableName, project )
+  if ( project_details.error ) return project_details
+  // Decrement the number of projects each user follows
+  const transact_items = project_details.followers.map( 
+    ( projectFollow ) => {
+      return { Update: {
+        TableName: tableName,
+        Key: new User( {
+          name: projectFollow.userName,
+          email: projectFollow.email,
+          userNumber: projectFollow.userNumber
+        } ).key(),
+        ConditionExpression: `attribute_exists(PK)`,
+        UpdateExpression: `SET #count = #count - :dec`,
+        ExpressionAttributeNames: { '#count': `NumberFollows` },
+        ExpressionAttributeValues: { ':dec': { 'N': `1` } },
+      } }
+    } 
+  )
+  // Delete each follow
+  transact_items.push( 
+    ...project_details.followers.map( ( projectFollow ) => {
+      return { Delete: {
+        TableName: tableName, Key: projectFollow.key(),
+        ConditionExpression: `attribute_exists(PK)`
+      } }
+    } ) 
+  )
+  // Delete the project
+  transact_items.push( { Delete: {
+    TableName: tableName, Key: project_details.project.key(),
+    ConditionExpression: `attribute_exists(PK)`
+  } } )
+  try {
+    // transactWriteItems is limited to 25 requests per write operation.
+    if ( transact_items.length <= 25 )
+      await dynamoDB.transactWriteItems( { 
+        TransactItems: transact_items 
+      } ).promise()
+    else {
+      let i, j
+      for ( i = 0, j = transact_items.length; i < j; i += 25 ) {
+        await dynamoDB.transactWriteItems( { 
+          TransactItems: transact_items.slice( i, i + 25 ) 
+        } ).promise()
+      }
+    }
+    return project_details
+  } catch( error ) {
+    return { 'error': `Could not remove project` }
+  }
+}
+
+/**
  * Increments the number of follows in the DynamoDB project item.
  * @param {String} tableName The name of the DynamoDB table.
  * @param {Object} project   The project to increment the number of follows.
@@ -205,6 +270,6 @@ const decrementNumberProjectFollows = async ( tableName, project ) => {
 }
 
 module.exports = {
-  addProject, getProject, getProjectDetails, updateProject,
+  addProject, getProject, getProjectDetails, updateProject, removeProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows
 }

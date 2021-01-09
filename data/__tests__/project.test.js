@@ -1,5 +1,5 @@
 const {
-  addBlog, addUser, addProjectFollow, updateProject,
+  addBlog, addUser, addProjectFollow, updateProject, removeProject,
   addProject, getProject, getProjectDetails,
   incrementNumberProjectFollows, decrementNumberProjectFollows,
 } = require( `..` )
@@ -164,6 +164,50 @@ describe( `updateProject`, () => {
     await expect(
       updateProject()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
+  } )
+} )
+
+describe( `removeProject`, () => {
+  test( `A project and followers can be removed from the table`, async () => {
+    let blog = new Blog( {} )
+    let project = new Project( { slug: `/`, title: `Tyler Norlund` } )
+    const user_a = new User( { name: `Tyler`, email: `me@me.com` } )
+    const user_b = new User( { name: `Joe`, email: `joe@me.com` } )
+    const projectFollow_a = new ProjectFollow( {
+      userName: `Tyler`, userNumber: 1, userFollowNumber: 1, email: `me@me.com`,
+      slug: `/`, title: `Tyler Norlund`, projectFollowNumber: 1
+    } )
+    const projectFollow_b = new ProjectFollow( {
+      userName: `Joe`, userNumber: 2, userFollowNumber: 2, email: `joe@me.com`,
+      slug: `/`, title: `Tyler Norlund`, projectFollowNumber: 1
+    } )
+    await addBlog( `test-table`, blog )
+    await addProject( `test-table`, project )
+    await addUser( `test-table`, user_a )
+    await addUser( `test-table`, user_b )
+    await addProjectFollow( `test-table`, user_a, project )
+    await addProjectFollow( `test-table`, user_b, project )
+    project.numberFollows = 2
+    const result = await removeProject( `test-table`, project )
+    expect( result.project ).toEqual( project )
+    expect( { ...result.followers[0], dateFollowed: undefined } ).toEqual(
+      { ...projectFollow_a, dateFollowed: undefined }
+    )
+    expect( { ...result.followers[1], dateFollowed: undefined } ).toEqual(
+      { ...projectFollow_b, dateFollowed: undefined }
+    )
+  } )
+
+  test( `Returns error when no project is in the table`, async () => {
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
+    const result = await removeProject( `test-table`, project )
+    expect( result ).toEqual( { 'error': `Project does not exist` } )
+  } )
+
+  test( `Returns error when the table does not exist`, async () => {
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
+    const result = await removeProject( `not-a-table`, project )
+    expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
 } )
 
