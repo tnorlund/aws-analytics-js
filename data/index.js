@@ -1,5 +1,5 @@
 const { getUserDetails } = require( `./getUserDetails` )
-const { addTOSToUser } = require( `./addTOStoUser` )
+// const { addTOSToUser } = require( `./addTOStoUser` )
 const { removeProject } = require( `./removeProject` )
 // const { updateProject } = require( `./updateProject` )
 const { addCommentToPost } = require( `./addCommentToPost` )
@@ -39,6 +39,8 @@ const {
   incrementNumberUserVotes, decrementNumberUserVotes
 } = require( `./user` )
 
+const { addTOS } = require( `./tos` )
+
 module.exports = {
   // Blog
   addBlog, getBlog, updateBlog, resetBlog,
@@ -55,12 +57,14 @@ module.exports = {
   incrementNumberUserFollows, decrementNumberUserFollows,
   incrementNumberUserComments, decrementNumberUserComments,
   incrementNumberUserVotes, decrementNumberUserVotes,
+  // TOS
+  addTOS,
   // Post
   addPost,
   incrementNumberPostComments, decrementNumberPostComments,
 
   getUserDetails,
-  addTOSToUser,
+  // addTOSToUser,
   removeProject,
   // updateProject,
   addCommentToPost,

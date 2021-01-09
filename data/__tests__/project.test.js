@@ -6,11 +6,9 @@ const {
 const { Blog, User, Project, ProjectFollow } = require( `../../entities` )
 
 describe( `addProject`, () => {
-  test( `A project can be added from to the table`, async () => {
+  test( `A project can be added to the table`, async () => {
     let blog = new Blog( {} )
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     await addBlog( `test-table`, blog )
     const result = await addProject( `test-table`, project )
     expect( result ).toEqual( { project } )
@@ -18,9 +16,7 @@ describe( `addProject`, () => {
 
   test( `Returns an error when the project is in the table`, async () => {
     let blog = new Blog( {} )
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     await addBlog( `test-table`, blog )
     await addProject( `test-table`, project )
     const result = await addProject( `test-table`, project )
@@ -31,9 +27,7 @@ describe( `addProject`, () => {
 
   test( `Returns error when the table does not exist`, async () => {
     let blog = new Blog( {} )
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     await addBlog( `test-table`, blog )
     const result = await addProject( `table-not-exist`, project )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
@@ -55,9 +49,7 @@ describe( `addProject`, () => {
 describe( `getProject`, () => {
   test( `A project can be queried from to the table`, async () => {
     let blog = new Blog( {} )
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     await addBlog( `test-table`, blog )
     await addProject( `test-table`, project )
     const result = await getProject( `test-table`, project )
@@ -65,17 +57,13 @@ describe( `getProject`, () => {
   } )
 
   test( `Returns error when no project is in the table`, async () => {
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const result = await getProject( `test-table`, project )
     expect( result ).toEqual( { 'error': `Project does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const result = await getProject( `not-a-table`, project )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
@@ -99,9 +87,7 @@ describe( `getProjectDetails`, () => {
     const user = new User( {
       name: `Tyler`, email: `me@me.com`
     } )
-    let project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    let project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const projectFollow = new ProjectFollow( {
       userName: `Tyler`, userNumber: 1, userFollowNumber: 1, email: `me@me.com`,
       slug: `/`, title: `Tyler Norlund`, projectFollowNumber: 1
@@ -121,17 +107,13 @@ describe( `getProjectDetails`, () => {
   } )
 
   test( `Returns error when no project is in the table`, async () => {
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const result = await getProjectDetails( `test-table`, project )
     expect( result ).toEqual( { 'error': `Project does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const result = await getProjectDetails( `not-a-table`, project )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
@@ -161,17 +143,13 @@ describe( `updateProject`, () => {
   } )
 
   test( `Returns error when no project is in the table`, async () => {
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const result = await updateProject( `test-table`, project )
     expect( result ).toEqual( { 'error': `Project does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const result = await updateProject( `not-a-table`, project )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
@@ -191,9 +169,7 @@ describe( `updateProject`, () => {
 
 describe( `incrementNumberProjectFollows`, () => {
   test( `The number of follows the project has can be incremented`, async () => { 
-    let project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    let project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     await addBlog( `test-table`, new Blog( {} ) )
     let result = await addProject( `test-table`, project )
     result = await incrementNumberProjectFollows( `test-table`, result.project )
@@ -202,17 +178,13 @@ describe( `incrementNumberProjectFollows`, () => {
   } )
 
   test( `Returns error when no project is in the table`, async () => {
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const result = await incrementNumberProjectFollows( `test-table`, project )
     expect( result ).toEqual( { 'error': `Project does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const result = await incrementNumberProjectFollows( `not-a-table`, project )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
@@ -245,17 +217,13 @@ describe( `decrementNumberProjectFollows`, () => {
   } )
 
   test( `Returns error when no project is in the table`, async () => {
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const result = await decrementNumberProjectFollows( `test-table`, project )
     expect( result ).toEqual( { 'error': `Project does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const project = new Project( {
-      slug: `/`, title: `Tyler Norlund`
-    } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
     const result = await decrementNumberProjectFollows( `not-a-table`, project )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )

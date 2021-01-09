@@ -11,9 +11,7 @@ const { Blog, User } = require( `../../entities` )
 describe( `addUser`, () => {
   test( `A user can be added from to the table`, async () => {
     let blog = new Blog( {} )
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     await addBlog( `test-table`, blog )
     const result = await addUser( `test-table`, user )
     blog.numberUsers += 1
@@ -23,9 +21,7 @@ describe( `addUser`, () => {
 
   test( `Returns error when the table does not exist`, async () => {
     let blog = new Blog( {} )
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     await addBlog( `test-table`, blog )
     const result = await addUser( `table-not-exist`, user )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
@@ -47,9 +43,7 @@ describe( `addUser`, () => {
 describe( `getUser`, () => {
   test( `A user can be queried from to the table`, async () => {
     let blog = new Blog( {} )
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     await addBlog( `test-table`, blog )
     await addUser( `test-table`, user )
     const result = await getUser( `test-table`, user )
@@ -59,17 +53,13 @@ describe( `getUser`, () => {
   } )  
 
   test( `Returns error when the user does not exist`, async () => {
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     const result = await getUser( `test-table`, user )
     expect( result ).toEqual( { 'error': `User does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     const result = await getUser( `table-not-exist`, user )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
@@ -141,17 +131,13 @@ describe( `decrementNumberUserFollows`, () => {
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     const result = await decrementNumberUserFollows( `test-table`, user )
     expect( result ).toEqual( { 'error': `User does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     const result = await decrementNumberUserFollows( `not-a-table`, user )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
@@ -223,17 +209,13 @@ describe( `decrementNumberUserComments`, () => {
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     const result = await decrementNumberUserComments( `test-table`, user )
     expect( result ).toEqual( { 'error': `User does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     const result = await decrementNumberUserComments( `not-a-table`, user )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
@@ -305,17 +287,13 @@ describe( `decrementNumberUserVotes`, () => {
   } )
 
   test( `Returns error when no blog is in the table`, async () => {
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     const result = await decrementNumberUserVotes( `test-table`, user )
     expect( result ).toEqual( { 'error': `User does not exist` } )
   } )
 
   test( `Returns error when the table does not exist`, async () => {
-    const user = new User( {
-      name: `Tyler`, email: `me@me.com`
-    } )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
     const result = await decrementNumberUserVotes( `not-a-table`, user )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
