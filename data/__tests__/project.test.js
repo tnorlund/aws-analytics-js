@@ -209,6 +209,18 @@ describe( `removeProject`, () => {
     const result = await removeProject( `not-a-table`, project )
     expect( result ).toEqual( { 'error': `Table does not exist` } )
   } )
+
+  test( `Throws an error when no project object is given`, async () => {
+    await expect(
+      removeProject( `test-table` )
+    ).rejects.toThrow( `Must give project` )
+  } )
+
+  test( `Throws an error when no table name is given.`, async () => {
+    await expect(
+      removeProject()
+    ).rejects.toThrow( `Must give the name of the DynamoDB table` )
+  } )
 } )
 
 describe( `incrementNumberProjectFollows`, () => {

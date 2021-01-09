@@ -1,6 +1,6 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
-const { Blog, postFromItem } = require( `../entities` )
+const { Blog, Post, postFromItem } = require( `../entities` )
 
 /**
  * Adds a post to DynamoDB.
@@ -68,7 +68,11 @@ const incrementNumberPostComments = async ( tableName, post ) => {
       ExpressionAttributeValues: { ':inc': { 'N': `1` } },
       ReturnValues: `ALL_NEW`
     } ).promise()
-    return { 'blog': postFromItem( response.Attributes ) }
+    return { 'post': new Post( {
+      slug: post.slug,
+      title: post.title,
+      numberComments: response.Attributes.NumberComments.N
+    } ) }
   } catch( error ) {
     let errorMessage = `Could not increment number of post comments`
     if ( error.code === `ConditionalCheckFailedException` )
@@ -99,7 +103,11 @@ const decrementNumberPostComments = async ( tableName, post ) => {
       ExpressionAttributeValues: { ':dec': { 'N': `1` } },
       ReturnValues: `ALL_NEW`
     } ).promise()
-    return { 'blog': postFromItem( response.Attributes ) }
+    return { 'post': new Post( {
+      slug: post.slug,
+      title: post.title,
+      numberComments: response.Attributes.NumberComments.N
+    } ) }
   } catch( error ) {
     let errorMessage = `Could not decrement number of post comments`
     if ( error.code === `ConditionalCheckFailedException` )
