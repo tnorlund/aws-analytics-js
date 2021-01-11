@@ -4,7 +4,7 @@ const {
   incrementNumberUserComments, incrementNumberUserVotes 
 } = require( `./user` )
 const { incrementNumberPostComments } = require( `./post` )
-const { Comment, Vote } = require( `../entities` )
+const { Comment, Vote, commentFromItem } = require( `../entities` )
 
 /**
  * Adds a comment to a post.
@@ -16,7 +16,8 @@ const { Comment, Vote } = require( `../entities` )
  * @returns {commentResponse} The result of accessing the database.
  */
 const addComment = async ( tableName, user, post, text, replyChain ) => {
-  if ( !tableName ) throw Error( `Must give the name of the DynamoDB table` )
+  if ( typeof tableName == `undefined` ) 
+    throw Error( `Must give the name of the DynamoDB table` )
   if ( typeof user == `undefined` ) throw new Error( `Must give user` )
   if ( typeof post == `undefined` ) throw new Error( `Must give post` )
   if ( typeof text == `undefined` ) 
@@ -68,8 +69,7 @@ const addComment = async ( tableName, user, post, text, replyChain ) => {
       userNumber: user_response.user.userNumber,
       userName: user_response.user.name,
       slug: post_response.post.slug,
-      replyChain: replyChain.concat( [ comment.dateAdded.toISOString() ] ),
-      commentDate: comment.dateAdded.dateAdded,
+      replyChain: [ ...replyChain, comment.dateAdded.toISOString() ],
       up: true,
       voteNumber: 1,
     } )
@@ -88,7 +88,7 @@ const addComment = async ( tableName, user, post, text, replyChain ) => {
           ConditionExpression: `attribute_not_exists(PK)`
         } }
       ]
-    } )
+    } ).promise()
     return { comment, vote }
   } catch ( error ) {
     console.log( `error`, error )
@@ -99,4 +99,67 @@ const addComment = async ( tableName, user, post, text, replyChain ) => {
   }
 }
 
-module.exports = { addComment }
+/**
+ * Retrieves the comment from DynamoDB.
+ * @param {String} tableName The name of the DynamoDB table.
+ * @param {Object} comment   The comment requested.
+ */
+const getComment = async ( tableName, comment ) => {
+  if ( typeof tableName == `undefined` )
+    throw Error( `Must give the name of the DynamoDB table` )
+  if ( typeof comment == `undefined` ) throw new Error( `Must give comment` )
+  try {
+    const result = await dynamoDB.getItem( {
+      TableName: tableName,
+      Key: comment.key()
+    } ).promise()
+    if ( !result.Item ) return { error: `Comment does not exist` }
+    else return { comment: commentFromItem( result.Item ) }
+  } catch( error ) {
+    let errorMessage = `Could not get comment`
+    if ( error.code == `ResourceNotFoundException` )
+      errorMessage = `Table does not exist`
+    return { error: errorMessage }
+  }
+}
+
+/**
+* Increments the number of votes a comment has.
+* @param {String} tableName  The name of the DynamoDB table.
+* @param {Object} comment    The comment to increment the number of votes.
+* @returns {commentResponse} The result of incrementing the number of votes
+*                            the comment has.
+*/
+const incrementNumberCommentVotes = async ( tableName, comment ) => {
+  if ( typeof tableName == `undefined` ) 
+    throw Error( `Must give the name of the DynamoDB table` )
+  if ( typeof comment == `undefined` ) throw new Error( `Must give comment` )
+  try {
+    const response = await dynamoDB.updateItem( {
+      TableName: tableName,
+      Key: comment.key(),
+      ConditionExpression: `attribute_exists(PK)`,
+      UpdateExpression: `SET #count = #count + :inc`,
+      ExpressionAttributeNames: { '#count': `NumberVotes` },
+      ExpressionAttributeValues: { ':inc': { 'N': `1` } },
+      ReturnValues: `ALL_NEW`
+    } ).promise()
+    // Set the number of votes the comment has to the value returned by the
+    // database.
+    comment.numberVotes = parseInt( response.Attributes.NumberVotes.N )
+    return { comment }
+  } catch( error ) {
+    let errorMessage = `Could not increment the number of votes the comment `
+    + `has`
+    if ( error.code === `ConditionalCheckFailedException` )
+      errorMessage = `Comment does not exist`
+    if ( error.code == `ResourceNotFoundException` )
+      errorMessage = `Table does not exist`
+    return { error : errorMessage }
+  }
+}
+
+module.exports = { 
+  addComment, getComment,
+  incrementNumberCommentVotes
+}

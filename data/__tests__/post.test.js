@@ -1,9 +1,11 @@
 const {
   addBlog,
-  addPost,
+  addComment,
+  addUser,
+  addPost, getPostDetails,
   incrementNumberPostComments, decrementNumberPostComments
 } = require( `..` )
-const { Blog, Post } = require( `../../entities` )
+const { Blog, Post, User } = require( `../../entities` )
 
 describe( `addPost`, () => {
   test( `A post can be added to the table`, async () => {
@@ -42,6 +44,76 @@ describe( `addPost`, () => {
   test( `Throws an error when no table name is given.`, async () => {
     await expect(
       addPost()
+    ).rejects.toThrow( `Must give the name of the DynamoDB table` )
+  } )
+} )
+
+describe( `getPostDetails`, () => {
+  test( `A post and its details can be queried from the table`, async () => {
+    const blog = new Blog( {} )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
+    const post = new Post( { slug: `/`, title: `Tyler Norlund` } )
+    await addBlog( `test-table`, blog )
+    await addPost( `test-table`, post )
+    await addUser( `test-table`, user )
+    const comment_result = await addComment( 
+      `test-table`, user, post, `This is a new comment.`
+    )
+    await addComment(
+      `test-table`, user, post, `This is a reply.`, 
+      [ comment_result.comment.dateAdded.toISOString() ]
+    )
+    post.numberComments += 1
+    const result = await getPostDetails( `test-table`, post )
+    expect( Object.keys( result ) ).toEqual( [ `post`, `comments` ] )
+    const base_comments = Object.keys( result.comments )
+    const reply_comments = Object.keys( 
+      result.comments[base_comments[0]].replies 
+    )
+    expect( base_comments.length ).toEqual( 1 )
+    expect( 
+      Object.keys( result.comments[base_comments[0]].votes ).length 
+    ).toEqual( 1 )
+    expect( reply_comments.length ).toEqual( 1 )
+    expect( 
+      Object.keys( 
+        result.comments[base_comments[0]].replies[reply_comments[0]].replies 
+      ).length 
+    ).toEqual( 0 )
+    expect( 
+      Object.keys( 
+        result.comments[base_comments[0]].replies[reply_comments[0]].votes 
+      ).length 
+    ).toEqual( 1 )
+  } )
+
+  test( `Returns an error when the post is not in the table`, async () => {
+    let blog = new Blog( {} )
+    const post = new Post( { slug: `/`, title: `Tyler Norlund` } )
+    await addBlog( `test-table`, blog )
+    const result = await getPostDetails( `test-table`, post )
+    expect( result ).toEqual( {
+      error: `Post does not exist`
+    } )
+  } )
+
+  test( `Returns error when the table does not exist`, async () => {
+    let blog = new Blog( {} )
+    const post = new Post( { slug: `/`, title: `Tyler Norlund` } )
+    await addBlog( `test-table`, blog )
+    const result = await getPostDetails( `table-not-exist`, post )
+    expect( result ).toEqual( { 'error': `Table does not exist` } )
+  } )
+
+  test( `Throws an error when no post object is given`, async () => {
+    await expect(
+      getPostDetails( `test-table` )
+    ).rejects.toThrow( `Must give post` )
+  } )
+
+  test( `Throws an error when no table name is given.`, async () => {
+    await expect(
+      getPostDetails()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )

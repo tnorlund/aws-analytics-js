@@ -2,7 +2,7 @@ const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
 const { User } = require( `../entities` )
 const { removeVote } = require( `./removeVote` )
-const { getPostDetails } = require( `./getPostDetails` )
+const { getPostDetails } = require( `./post` )
 
 /**
  * Removes a comment and its votes from the table.

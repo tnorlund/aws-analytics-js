@@ -3,12 +3,12 @@ const { getUserDetails } = require( `./getUserDetails` )
 // const { removeProject } = require( `./removeProject` )
 // const { updateProject } = require( `./updateProject` )
 // const { addCommentToPost } = require( `./addCommentToPost` )
-const { getPostDetails } = require( `./getPostDetails` )
+// const { getPostDetails } = require( `./getPostDetails` )
 const { removeCommentFromPost } = require( `./removeCommentFromPost` )
 const { removePost } = require( `./removePost` )
 const { addVote } = require( `./addVote` )
 const { removeVote } = require( `./removeVote` )
-const { addReplyToComment } = require( `./addReplyToComment` )
+// const { addReplyToComment } = require( `./addReplyToComment` )
 const { updateUserName } = require( `./updateUserName` )
 
 const {
@@ -18,7 +18,10 @@ const {
   incrementNumberBlogProjects, decrementNumberBlogProjects
 } = require( `./blog` )
 
-const { addComment } = require( `./comment` )
+const { 
+  addComment, getComment, 
+  incrementNumberCommentVotes
+} = require( `./comment` )
 const {
   addProject, getProject, getProjectDetails, updateProject, removeProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows
@@ -29,7 +32,7 @@ const {
 } = require( `./projectFollow` )
 
 const {
-  addPost,
+  addPost, getPostDetails,
   incrementNumberPostComments, decrementNumberPostComments
 } = require( `./post` )
 
@@ -49,7 +52,8 @@ module.exports = {
   incrementNumberBlogPosts, decrementNumberBlogPosts,
   incrementNumberBlogProjects, decrementNumberBlogProjects,
   // Comment
-  addComment,
+  addComment, getComment,
+  incrementNumberCommentVotes,
   // Project
   addProject, getProject, getProjectDetails, updateProject, removeProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows,
@@ -63,7 +67,7 @@ module.exports = {
   // TOS
   addTOS,
   // Post
-  addPost,
+  addPost, getPostDetails,
   incrementNumberPostComments, decrementNumberPostComments,
 
   getUserDetails,
@@ -71,11 +75,11 @@ module.exports = {
   // removeProject,
   // updateProject,
   // addCommentToPost,
-  getPostDetails,
+  // getPostDetails,
   removeCommentFromPost,
   removePost,
   addVote,
   removeVote,
-  addReplyToComment,
+  // addReplyToComment,
   updateUserName
 }

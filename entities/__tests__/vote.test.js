@@ -90,7 +90,12 @@ describe( `vote object`, () => {
   } ) )
 
   test( `voteFromItem`, () => {
-    const vote = new Vote( { userNumber, userName, slug, voteNumber, up, dateAdded, replyChain: [baseCommentDate] } )
+    const first_date = new Date()
+    const second_date = new Date()
+    const vote = new Vote( { 
+      userNumber, userName, slug, voteNumber, up, dateAdded, 
+      replyChain: [first_date, second_date] 
+    } )
     expect( voteFromItem( vote.toItem() ) ).toEqual( vote )
   } )
 } )

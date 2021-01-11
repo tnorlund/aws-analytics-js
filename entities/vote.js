@@ -37,7 +37,7 @@ class Vote {
       throw new Error( `Vote requires a chain of comments` )
     this.replyChain = replyChain.map( ( date ) => {
       if ( typeof date == `string` ) return parseDate( date )
-      else if ( date instanceof Date ) return dateAdded
+      else if ( date instanceof Date ) return date
       else throw new Error(
         `The chain of comments this replies to must be either strings or dates`
       )
@@ -66,7 +66,7 @@ class Vote {
   /**
    * @returns {Object} The first global secondary index primary key
    */
-  gsi1pk() { return {'S': `POST#${ this.slug }` } }
+  gsi1pk() { return { 'S': `POST#${ this.slug }` } }
 
   /**
    * @returns {Object} The first global secondary index primary key
