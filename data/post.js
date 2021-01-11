@@ -1,6 +1,6 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
-const { Blog, Post, postFromItem } = require( `../entities` )
+const { Blog, Post } = require( `../entities` )
 
 /**
  * Adds a post to DynamoDB.
@@ -11,8 +11,7 @@ const { Blog, Post, postFromItem } = require( `../entities` )
 const addPost = async ( tableName, post ) => {
   if ( typeof tableName == `undefined` ) 
     throw Error( `Must give the name of the DynamoDB table` )
-  if ( typeof post == `undefined` )
-    throw new Error( `Must give post` )
+  if ( typeof post == `undefined` ) throw new Error( `Must give post` )
   const blog = new Blog( {} )
   try {
     await dynamoDB.transactWriteItems( {

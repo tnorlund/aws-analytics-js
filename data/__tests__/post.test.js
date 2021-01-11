@@ -6,7 +6,7 @@ const {
 const { Blog, Post } = require( `../../entities` )
 
 describe( `addPost`, () => {
-  test( `A post can be added from to the table`, async () => {
+  test( `A post can be added to the table`, async () => {
     let blog = new Blog( {} )
     const post = new Post( { slug: `/`, title: `Tyler Norlund` } )
     await addBlog( `test-table`, blog )
@@ -96,7 +96,7 @@ describe( `decrementNumberPostComments`, () => {
     await addPost( `test-table`, post )
     const result = await decrementNumberPostComments( `test-table`, post )
     post.numberComments -= 1
-    expect( result ).toEqual( { 'post': post } )
+    expect( result ).toEqual( { post } )
   } )
 
   test( `Returns an error when the post is not in the table`, async () => {
