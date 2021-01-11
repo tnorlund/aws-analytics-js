@@ -37,7 +37,7 @@ class Comment {
       throw new Error( `Chain of comments must be an array.` )
     this.replyChain = replyChain.map( ( date ) => {
       if ( typeof date == `string` ) return parseDate( date )
-      else if ( date instanceof Date ) return dateAdded
+      else if ( date instanceof Date ) return date
       else throw Error(
         `The chain of comments this replies to must be either strings or dates`
       )
