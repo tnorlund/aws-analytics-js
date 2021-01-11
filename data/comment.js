@@ -12,9 +12,10 @@ const { Comment, Vote } = require( `../entities` )
  * @param {Object} user       The user adding the comment.
  * @param {Object} post       The post the user is adding the comment to.
  * @param {String} text       The text of the comment.
+ * @param {Array}  replyChain The set of dates the comment is replying to.
  * @returns {commentResponse} The result of accessing the database.
  */
-const addComment = async ( tableName, user, post, text ) => {
+const addComment = async ( tableName, user, post, text, replyChain ) => {
   if ( !tableName ) throw Error( `Must give the name of the DynamoDB table` )
   if ( typeof user == `undefined` ) throw new Error( `Must give user` )
   if ( typeof post == `undefined` ) throw new Error( `Must give post` )
@@ -29,26 +30,50 @@ const addComment = async ( tableName, user, post, text ) => {
   if ( post_response.error ) return post_response
   const vote_response = await incrementNumberUserVotes( tableName, user )
   if ( vote_response.error ) return vote_response
+  let comment, vote
   // Create the comment and vote.
-  const comment = new Comment( {
-    userNumber: user_response.user.userNumber,
-    userCommentNumber: user_response.user.numberComments,
-    userName: user_response.user.name,
-    slug: post_response.post.slug,
-    postCommentNumber: post_response.post.numberComments,
-    text,
-    vote: 1,
-    numberVotes: 1
-  } )
-  const vote = new Vote( {
-    userNumber: user_response.user.userNumber,
-    userName: user_response.user.name,
-    slug: post_response.post.slug,
-    replyChain: [ comment.dateAdded.toISOString() ],
-    commentDate: comment.dateAdded.dateAdded,
-    up: true,
-    voteNumber: 1
-  } )
+  if ( typeof replyChain == `undefined` ) {
+    comment = new Comment( {
+      userNumber: user_response.user.userNumber,
+      userCommentNumber: user_response.user.numberComments,
+      userName: user_response.user.name,
+      slug: post_response.post.slug,
+      postCommentNumber: post_response.post.numberComments,
+      text,
+      vote: 1,
+      numberVotes: 1
+    } )
+    vote = new Vote( {
+      userNumber: user_response.user.userNumber,
+      userName: user_response.user.name,
+      slug: post_response.post.slug,
+      replyChain: [ comment.dateAdded.toISOString() ],
+      commentDate: comment.dateAdded.dateAdded,
+      up: true,
+      voteNumber: 1
+    } )
+  } else {
+    comment = new Comment( {
+      userNumber: user_response.user.userNumber,
+      userCommentNumber: user_response.user.numberComments,
+      userName: user_response.user.name,
+      slug: post_response.post.slug,
+      postCommentNumber: post_response.post.numberComments,
+      vote: 1,
+      numberVotes: 1,
+      text, 
+      replyChain: replyChain
+    } )
+    vote = new Vote( {
+      userNumber: user_response.user.userNumber,
+      userName: user_response.user.name,
+      slug: post_response.post.slug,
+      replyChain: replyChain.concat( [ comment.dateAdded.toISOString() ] ),
+      commentDate: comment.dateAdded.dateAdded,
+      up: true,
+      voteNumber: 1,
+    } )
+  }
   try {
     await dynamoDB.transactWriteItems( {
       TransactItems: [
