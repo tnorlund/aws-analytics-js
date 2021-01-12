@@ -6,7 +6,7 @@ const { getUserDetails } = require( `./getUserDetails` )
 // const { getPostDetails } = require( `./getPostDetails` )
 const { removeCommentFromPost } = require( `./removeCommentFromPost` )
 const { removePost } = require( `./removePost` )
-const { addVote } = require( `./addVote` )
+// const { addVote } = require( `./addVote` )
 const { removeVote } = require( `./removeVote` )
 // const { addReplyToComment } = require( `./addReplyToComment` )
 const { updateUserName } = require( `./updateUserName` )
@@ -46,6 +46,8 @@ const {
 
 const { addTOS } = require( `./tos` )
 
+const { addVote } = require( `./vote` )
+
 module.exports = {
   // Blog
   addBlog, getBlog, updateBlog, resetBlog,
@@ -71,6 +73,8 @@ module.exports = {
   // Post
   addPost, getPostDetails,
   incrementNumberPostComments, decrementNumberPostComments,
+  // Vote
+  addVote,
 
   getUserDetails,
   // addTOSToUser,
@@ -80,7 +84,7 @@ module.exports = {
   // getPostDetails,
   removeCommentFromPost,
   removePost,
-  addVote,
+  // addVote,
   removeVote,
   // addReplyToComment,
   updateUserName
