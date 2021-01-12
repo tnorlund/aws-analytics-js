@@ -1,7 +1,7 @@
 const { 
   addBlog, addPost, addUser,
   addComment, getComment,
-  incrementNumberCommentVotes,
+  incrementNumberCommentVotes, decrementNumberCommentVotes
 } = require( `..` )
 
 const { Blog, User, Post, Comment, Vote } = require( `../../entities` )
@@ -241,6 +241,65 @@ describe( `incrementNumberCommentVotes`, () => {
   test( `Throws an error when no table name is given.`, async () => {
     await expect(
       incrementNumberCommentVotes()
+    ).rejects.toThrow( `Must give the name of the DynamoDB table` )
+  } )
+} )
+
+describe( `decrementNumberCommentVotes`, () => {
+  test( `The number of votes a comment has can be incremented`, async () => {
+    const blog = new Blog( {} )
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
+    const post = new Post( { slug: `/`, title: `Tyler Norlund` } )
+    let comment = new Comment( {
+      userNumber: 1, userCommentNumber: 1, userName: `Tyler`, slug: `/`, 
+      text: `This is a new comment.`, vote: 1, numberVotes: 1
+    } )
+    await addBlog( `test-table`, blog )
+    await addPost( `test-table`, post )
+    await addUser( `test-table`, user )
+    const comment_result = await addComment( 
+      `test-table`, user, post, `This is a new comment.`
+    )
+    const result = await decrementNumberCommentVotes( 
+      `test-table`, comment_result.comment 
+    )
+    comment.numberVotes -= 1
+    expect( { 
+      comment: { ...result.comment, dateAdded: undefined } 
+    } ).toEqual( { 
+      comment: { ...comment, dateAdded: undefined }, 
+    } )
+  } )
+
+  test( `Returns error when the comment does not exist`, async () => { 
+    const comment = new Comment( {
+      userNumber: 1, userCommentNumber: 1, userName: `Tyler`, slug: `/`, 
+      text: `This is a new comment.`, vote: 1, numberVotes: 1
+    } )
+    const result = await decrementNumberCommentVotes( `test-table`, comment )
+    expect( result ).toEqual( { 'error': `Comment does not exist` } )
+  } )
+
+  test( `Returns error when the table does not exist`, async () => { 
+    const comment = new Comment( {
+      userNumber: 1, userCommentNumber: 1, userName: `Tyler`, slug: `/`, 
+      text: `This is a new comment.`, vote: 1, numberVotes: 1
+    } )
+    const result = await decrementNumberCommentVotes( 
+      `table-not-exist`, comment 
+    )
+    expect( result ).toEqual( { 'error': `Table does not exist` } )
+  } )
+
+  test( `Throws an error when no comment is given.`, async () => {
+    await expect(
+      decrementNumberCommentVotes( `test-table` )
+    ).rejects.toThrow( `Must give comment` )
+  } )
+
+  test( `Throws an error when no table name is given.`, async () => {
+    await expect(
+      decrementNumberCommentVotes()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )

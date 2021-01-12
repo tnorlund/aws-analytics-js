@@ -159,7 +159,43 @@ const incrementNumberCommentVotes = async ( tableName, comment ) => {
   }
 }
 
+/**
+* Decrements the number of votes a comment has.
+* @param {String} tableName The name of the DynamoDB table.
+* @param {Object} comment   The comment to decrement the number of votes.
+* @returns {Map}            The result of decrementing the number of votes the
+*                           comment has.
+*/
+const decrementNumberCommentVotes = async ( tableName, comment ) => {
+  if ( typeof tableName == `undefined` ) 
+    throw Error( `Must give the name of the DynamoDB table` )
+  if ( typeof comment == `undefined` ) throw new Error( `Must give comment` )
+  try {
+    const response = await dynamoDB.updateItem( {
+      TableName: tableName,
+      Key: comment.key(),
+      ConditionExpression: `attribute_exists(PK)`,
+      UpdateExpression: `SET #count = #count - :dec`,
+      ExpressionAttributeNames: { '#count': `NumberVotes` },
+      ExpressionAttributeValues: { ':dec': { 'N': `1` } },
+      ReturnValues: `ALL_NEW`
+    } ).promise()
+    // Set the number of votes the comment has to the value returned by the
+    // database.
+    comment.numberVotes = parseInt( response.Attributes.NumberVotes.N )
+    return { comment }
+  } catch( error ) {
+    let errorMessage = `Could not decrement the number of votes the comment `
+    + `has`
+    if ( error.code === `ConditionalCheckFailedException` )
+      errorMessage = `Comment does not exist`
+    if ( error.code == `ResourceNotFoundException` )
+      errorMessage = `Table does not exist`
+    return { error : errorMessage }
+  }
+}
+
 module.exports = { 
   addComment, getComment,
-  incrementNumberCommentVotes
+  incrementNumberCommentVotes, decrementNumberCommentVotes
 }
