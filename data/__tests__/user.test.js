@@ -1,12 +1,13 @@
 const {
-  addBlog,
-  addUser, getUser,
+  addBlog, addTOS, addPost, addComment, addProject, addProjectFollow,
+  addUser, getUser, getUserDetails, 
   incrementNumberUserFollows, decrementNumberUserFollows,
   incrementNumberUserComments, decrementNumberUserComments,
   incrementNumberUserVotes, decrementNumberUserVotes
 } = require( `..` )
-const { Blog, User } = require( `../../entities` )
-
+const { 
+  Blog, User, Post, Project, TOS 
+} = require( `../../entities` )
 
 describe( `addUser`, () => {
   test( `A user can be added from to the table`, async () => {
@@ -73,6 +74,72 @@ describe( `getUser`, () => {
   test( `Throws an error when no table name is given.`, async () => {
     await expect(
       getUser()
+    ).rejects.toThrow( `Must give the name of the DynamoDB table` )
+  } )
+} )
+
+describe( `getUserDetails`, () => {
+  test( `A user's details can be queried from to the table`, async () => {
+    let blog = new Blog( {} )
+    let user = new User( { name: `Tyler`, email: `me@me.com` } )
+    const project = new Project( { slug: `/`, title: `Tyler Norlund` } )
+    const post = new Post( { slug: `/`, title: `Tyler Norlund` } )
+    let comment = new Comment( {
+      userNumber: 1, userCommentNumber: 1, userName: `Tyler`, slug: `/`, 
+      text: `This is a new comment.`, vote: 1, numberVotes: 1
+    } )
+    let tos = new TOS( { 
+      userNumber: 1, version: new Date().toISOString() 
+    } )
+    await addBlog( `test-table`, blog )
+    await addProject( `test-table`, project )
+    let result = await addUser( `test-table`, user )
+    user = result.user
+    result = await addProjectFollow( `test-table`, user, project )
+    user.numberFollows += 1
+    const project_follow = result.projectFollow
+    result = await addTOS( `test-table`, user, tos )
+    tos = {}
+    tos[result.tos.version.toISOString()] = result.tos
+    await addPost( `test-table`, post )
+    result = await addComment( 
+      `test-table`, user, post, `This is a new comment` 
+    )
+    comment = result.comment
+    let vote = result.vote
+    user.numberComments += 1
+    user.numberVotes += 1
+    result = await getUserDetails( `test-table`, user )
+    expect( result ).toEqual( { 
+      user, 
+      follows: [ project_follow ],
+      comments: [ comment ],
+      votes: [ vote ],
+      tos
+    } )
+  } ) 
+
+  test( `Returns error when the user does not exist`, async () => {
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
+    const result = await getUserDetails( `test-table`, user )
+    expect( result ).toEqual( { 'error': `User does not exist` } )
+  } )
+
+  test( `Returns error when the table does not exist`, async () => {
+    const user = new User( { name: `Tyler`, email: `me@me.com` } )
+    const result = await getUserDetails( `table-not-exist`, user )
+    expect( result ).toEqual( { 'error': `Table does not exist` } )
+  } )
+
+  test( `Throws an error when no user object is given`, async () => {
+    await expect(
+      getUserDetails( `test-table` )
+    ).rejects.toThrow( `Must give user` )
+  } )
+  
+  test( `Throws an error when no table name is given.`, async () => {
+    await expect(
+      getUserDetails()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )

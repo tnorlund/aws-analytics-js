@@ -1,7 +1,13 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
 const { incrementNumberBlogUsers } = require( `./blog` )
-const { userFromItem } = require( `../entities` )
+const { 
+  userFromItem, 
+  tosFromItem, 
+  projectFollowFromItem ,
+  commentFromItem,
+  voteFromItem
+} = require( `../entities` )
 
 /**
  * Adds a user to DynamoDB.
@@ -37,8 +43,7 @@ const addUser = async ( tableName, user ) => {
 const getUser = async ( tableName, user ) => {
   if ( typeof tableName == `undefined` )
     throw new Error( `Must give the name of the DynamoDB table` )
-  if ( typeof user == `undefined` )
-    throw new Error( `Must give user` )
+  if ( typeof user == `undefined` ) throw new Error( `Must give user` )
   try {
     const result = await dynamoDB.getItem( {
       TableName: tableName,
@@ -46,6 +51,57 @@ const getUser = async ( tableName, user ) => {
     } ).promise()
     if ( !result.Item ) return { error: `User does not exist` }
     return { user: userFromItem( result.Item ) }
+  } catch( error ) {
+    let errorMessage = `Could not get user`
+    if ( error.code == `ResourceNotFoundException` )
+      errorMessage = `Table does not exist`
+    return { 'error': errorMessage }
+  }
+}
+
+/**
+ * Retrieves the user and their details from DynamoDB.
+ * @param {String} tableName The name of the DynamoDB table.
+ * @param {Object} user      The user requested.
+ */
+const getUserDetails = async ( tableName, user ) => {
+  if ( typeof tableName == `undefined` )
+    throw new Error( `Must give the name of the DynamoDB table` )
+  if ( typeof user == `undefined` ) throw new Error( `Must give user` )
+  try {
+    const result = await dynamoDB.query( {
+      TableName: tableName,
+      KeyConditionExpression: `#pk = :pk`,
+      ExpressionAttributeNames: { '#pk': `PK` },
+      ExpressionAttributeValues: { ':pk': user.pk() },
+      ScanIndexForward: false
+    } ).promise()
+    if ( result.Items.length == 0 ) return { error: `User does not exist` }
+    let requestedUser
+    let comments = []
+    let votes = []
+    let tos = {}
+    let follows = []
+    result.Items.map( ( item ) => {
+      switch ( item.Type.S ) {
+        case `user`:
+          requestedUser = userFromItem( item ); break
+        case `terms of service`: {
+          const requestedTOS = tosFromItem( item )
+
+          tos[requestedTOS.version.toISOString()] = requestedTOS
+          break
+        }
+        case `project follow`:
+          follows.push( projectFollowFromItem( item ) ); break
+        case `comment`:
+          comments.push( commentFromItem( item ) ); break
+        case `vote`:
+          votes.push( voteFromItem( item ) ); break
+        default: throw Error( `Could not parse type ${ item.Type.S }` )
+      }
+    } )
+    return { user: requestedUser, votes, tos, comments, follows }
   } catch( error ) {
     let errorMessage = `Could not get user`
     if ( error.code == `ResourceNotFoundException` )
@@ -247,7 +303,7 @@ const decrementNumberUserVotes = async ( tableName, user ) => {
 }
 
 module.exports = {
-  addUser, getUser,
+  addUser, getUser, getUserDetails,
   incrementNumberUserFollows, decrementNumberUserFollows,
   incrementNumberUserComments, decrementNumberUserComments,
   incrementNumberUserVotes, decrementNumberUserVotes
