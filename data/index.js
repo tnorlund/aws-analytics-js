@@ -1,10 +1,6 @@
 const { getUserDetails } = require( `./getUserDetails` )
-// const { addTOSToUser } = require( `./addTOStoUser` )
-// const { removeProject } = require( `./removeProject` )
-// const { updateProject } = require( `./updateProject` )
-// const { addCommentToPost } = require( `./addCommentToPost` )
-// const { getPostDetails } = require( `./getPostDetails` )
-const { removeCommentFromPost } = require( `./removeCommentFromPost` )
+
+// const { removeCommentFromPost } = require( `./removeCommentFromPost` )
 const { removePost } = require( `./removePost` )
 // const { addVote } = require( `./addVote` )
 // const { removeVote } = require( `./removeVote` )
@@ -77,15 +73,7 @@ module.exports = {
   addVote, removeVote,
 
   getUserDetails,
-  // addTOSToUser,
-  // removeProject,
-  // updateProject,
-  // addCommentToPost,
-  // getPostDetails,
-  removeCommentFromPost,
+  // removeCommentFromPost,
   removePost,
-  // addVote,
-  // removeVote,
-  // addReplyToComment,
   updateUserName
 }
