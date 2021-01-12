@@ -1,7 +1,7 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
 const { User } = require( `../entities` )
-const { removeVote } = require( `./removeVote` )
+const { removeVote } = require( `./Vote` )
 const { getPostDetails } = require( `./post` )
 
 /**
