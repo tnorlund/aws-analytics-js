@@ -20,7 +20,8 @@ const {
 
 const { 
   addComment, getComment, 
-  incrementNumberCommentVotes, decrementNumberCommentVotes
+  incrementNumberCommentVotes, decrementNumberCommentVotes,
+  incrementCommentVote, decrementCommentVote
 } = require( `./comment` )
 const {
   addProject, getProject, getProjectDetails, updateProject, removeProject,
@@ -54,6 +55,7 @@ module.exports = {
   // Comment
   addComment, getComment,
   incrementNumberCommentVotes, decrementNumberCommentVotes,
+  incrementCommentVote, decrementCommentVote,
   // Project
   addProject, getProject, getProjectDetails, updateProject, removeProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows,
