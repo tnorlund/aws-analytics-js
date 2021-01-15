@@ -1,11 +1,13 @@
 const { 
   addBlog, addPost, addUser,
-  addComment, getComment,
+  addComment, getComment, removeComment, 
   incrementNumberCommentVotes, decrementNumberCommentVotes,
   incrementCommentVote, decrementCommentVote
 } = require( `..` )
 
 const { Blog, User, Post, Comment, Vote } = require( `../../entities` )
+const { getPostDetails } = require( `../post` )
+const { getUserDetails } = require( `../user` )
 
 describe( `addComment`, () => {
   test( `A comment can be added to the table`, async () => {
@@ -183,6 +185,84 @@ describe( `getComment`, () => {
   test( `Throws an error when no table name is given.`, async () => {
     await expect(
       getComment()
+    ).rejects.toThrow( `Must give the name of the DynamoDB table` )
+  } )
+} )
+
+describe( `removeComment`, () => {
+  test( `A comment and its details can be removed from the table`,
+    async () => {
+      const blog = new Blog( {} )
+      const user = new User( { name: `Tyler`, email: `me@me.com` } )
+      const post = new Post( { slug: `/`, title: `Tyler Norlund` } )
+      await addBlog( `test-table`, blog )
+      await addPost( `test-table`, post )
+      await addUser( `test-table`, user )
+      let result = await addComment( 
+        `test-table`, user, post, `This is a new comment.`
+      )
+      comment = result.comment 
+      result = await addComment(
+        `test-table`, user, post, `This is a reply`, [comment.dateAdded]
+      )
+      result = await removeComment( `test-table`, comment )
+      expect( result ).toEqual( comment )
+      const post_details = await getPostDetails( `test-table`, post )
+      expect( post_details ).toEqual( { post, comments:{} } )
+      const user_details = await getUserDetails( `test-table`, user )
+      expect( user_details.user ).toEqual( user )
+    } 
+  )
+  
+  test( `A reply comment and its details can be removed from the table`,
+    async () => {
+      const blog = new Blog( {} )
+      const user = new User( { name: `Tyler`, email: `me@me.com` } )
+      const post = new Post( { slug: `/`, title: `Tyler Norlund` } )
+      await addBlog( `test-table`, blog )
+      await addPost( `test-table`, post )
+      await addUser( `test-table`, user )
+      let result = await addComment( 
+        `test-table`, user, post, `This is a new comment.`
+      )
+      const base_comment = result.comment 
+      result = await addComment(
+        `test-table`, user, post, `This is a reply`, [base_comment.dateAdded]
+      )
+      post.numberComments += 1
+      user.numberComments += 1
+      user.numberVotes += 1
+      const comment = result.comment
+      let post_details = await getPostDetails( `test-table`, post )
+      let comments = post_details.comments
+      comments[ base_comment.dateAdded.toISOString() ].replies = {}
+      result = await removeComment( `test-table`, comment )
+      expect( result ).toEqual( comment )
+      post_details = await getPostDetails( `test-table`, post )
+      expect( post_details ).toEqual( { post, comments } )
+      const user_details = await getUserDetails( `test-table`, user )
+      expect( user_details.user ).toEqual( user )
+    } 
+  )
+
+  test( `Returns error when the table does not exist`, async () => {
+    const comment = new Comment( {
+      userNumber: 1, userCommentNumber: 2, userName: `Tyler`, slug: `/`, 
+      text: `This is a reply.`, vote: 1, numberVotes: 1
+    } )
+    const result = await removeComment( `not-a-table`, comment )
+    expect( result ).toEqual( { 'error': `Table does not exist` } )
+  } )
+
+  test( `Throws an error when no comment is given.`, async () => {
+    await expect(
+      removeComment( `test-table` )
+    ).rejects.toThrow( `Must give comment` )
+  } )
+
+  test( `Throws an error when no table name is given.`, async () => {
+    await expect(
+      removeComment()
     ).rejects.toThrow( `Must give the name of the DynamoDB table` )
   } )
 } )

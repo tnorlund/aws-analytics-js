@@ -1,4 +1,3 @@
-// const { getUserDetails } = require( `./getUserDetails` )
 // const { removeCommentFromPost } = require( `./removeCommentFromPost` )
 const { removePost } = require( `./removePost` )
 const { updateUserName } = require( `./updateUserName` )
@@ -11,7 +10,7 @@ const {
 } = require( `./blog` )
 
 const { 
-  addComment, getComment, 
+  addComment, getComment, removeComment,
   incrementNumberCommentVotes, decrementNumberCommentVotes,
   incrementCommentVote, decrementCommentVote
 } = require( `./comment` )
@@ -47,7 +46,7 @@ module.exports = {
   incrementNumberBlogPosts, decrementNumberBlogPosts,
   incrementNumberBlogProjects, decrementNumberBlogProjects,
   // Comment
-  addComment, getComment,
+  addComment, getComment, removeComment,
   incrementNumberCommentVotes, decrementNumberCommentVotes,
   incrementCommentVote, decrementCommentVote,
   // Project
