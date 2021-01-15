@@ -3,8 +3,9 @@ const dynamoDB = new AWS.DynamoDB()
 const { 
   incrementNumberUserComments, incrementNumberUserVotes 
 } = require( `./user` )
+const { aggregateData, aggregateDataToTransact } = require( `./utils` )
 const { incrementNumberPostComments, getPostDetails } = require( `./post` )
-const { Comment, Vote, commentFromItem, Post, User } = require( `../entities` )
+const { Comment, Vote, commentFromItem, Post } = require( `../entities` )
 
 /**
  * Adds a comment to a post.
@@ -91,7 +92,6 @@ const addComment = async ( tableName, user, post, text, replyChain ) => {
     } ).promise()
     return { comment, vote }
   } catch ( error ) {
-    console.log( `error`, error )
     let errorMessage = `Could not add comment to post`
     if ( error.code == `ConditionalCheckFailedException` )
       errorMessage = `Comment already in database`
@@ -143,50 +143,9 @@ const removeComment = async ( tableName, comment ) => {
   aggregate_data[`vote`] = []
   aggregate_data[`comment`] = []
   aggregate_data[`user`] = {}
-  aggregate_data = _aggregateData( comment_to_delete, aggregate_data )
-  // For each vote, decrement the number of votes that the user has and remove
-  // the vote.
-  let transact_items = []
-  aggregate_data.comment.map( key => transact_items.push( {
-    Delete: {
-      TableName: tableName,
-      Key: key,
-      ConditionExpression: `attribute_exists(PK)`
-    }
-  } ) )
-  aggregate_data.vote.map( key => transact_items.push( {
-    Delete: {
-      TableName: tableName,
-      Key: key,
-      ConditionExpression: `attribute_exists(PK)`
-    }
-  } ) )
-  Object.entries( aggregate_data.user ).forEach( 
-    ( [ userNumber, userDetails ] ) => {
-      transact_items.push( {
-        Update: {
-          TableName: tableName,
-          Key: new User( {
-            name: `someone`,
-            email: `something`,
-            userNumber: userNumber
-          } ).key(),
-          ConditionExpression: `attribute_exists(PK)`,
-          UpdateExpression: 
-            `SET #comments = #comments - :comment_dec, `
-            + `#votes = #votes - :vote_dec`,
-          ExpressionAttributeNames: { 
-            '#comments': `NumberComments`,
-            '#votes': `NumberVotes`,
-          },
-          ExpressionAttributeValues: { 
-            ':comment_dec': { 'N': `${userDetails.comment}` },
-            ':vote_dec': { 'N': `${userDetails.vote}` } 
-          },
-        }
-      } )
-    }
-  )
+  // console.log( `comment_to_delete`, comment_to_delete )
+  aggregate_data = aggregateData( comment_to_delete, aggregate_data )
+  const transact_items = aggregateDataToTransact( aggregate_data, tableName )
   // Decrement the number of comments the post has
   transact_items.push( {
     Update: {
@@ -237,46 +196,6 @@ const _commentFromDetails = ( comments, comment, replyChain ) => {
       comments[ date.toISOString() ].replies, comment, replyChain 
     )
   } else { return comments[ comment.dateAdded.toISOString() ] }
-}
-
-/**
- * 
- * @param {Map}   commentsToDelete 
- * @param {Array} aggregate_data         
- */
-const _aggregateData = ( commentsToDelete, aggregate_data ) => {
-  // Recursively get the replies and votes associated to this comment
-  if ( Object.keys( commentsToDelete.replies ).length > 0 ) {
-    Object.values( commentsToDelete.replies ).forEach( 
-      ( reply ) => aggregate_data = _aggregateData( reply, aggregate_data )
-    )
-  }
-  // Get the number of votes each user has made on this comment
-  Object.values( commentsToDelete.votes ).forEach( 
-    ( vote ) => {
-      if ( aggregate_data.user[ vote.userNumber ] ) {
-        if ( aggregate_data.user[ vote.userNumber ][ `vote` ] )
-          aggregate_data.user[ vote.userNumber ].vote += 1
-        else aggregate_data.user[ vote.userNumber ].vote = 1
-      } else {
-        aggregate_data.user[ vote.userNumber ] = {}
-        aggregate_data.user[ vote.userNumber ][`vote`] = 1
-      }
-      aggregate_data[`vote`].push( vote.key() )
-    } 
-  )
-  // Add the comment data
-  if ( aggregate_data.user[ commentsToDelete.userNumber ] ) {
-    if ( aggregate_data.user[ commentsToDelete.userNumber ][ `comment` ] )
-      aggregate_data.user[ commentsToDelete.userNumber ].comment += 1
-    else
-      aggregate_data.user[ commentsToDelete.userNumber ].comment = 1
-  } else {
-    aggregate_data.user[ commentsToDelete.userNumber ] = {}
-    aggregate_data.user[ commentsToDelete.userNumber ][ `comment` ] = 1
-  }
-  aggregate_data[`comment`].push( commentsToDelete.key() )
-  return aggregate_data
 }
 
 /**

@@ -1,5 +1,4 @@
-// const { removeCommentFromPost } = require( `./removeCommentFromPost` )
-const { removePost } = require( `./removePost` )
+// const { removePost } = require( `./removePost` )
 const { updateUserName } = require( `./updateUserName` )
 
 const {
@@ -24,7 +23,7 @@ const {
 } = require( `./projectFollow` )
 
 const {
-  addPost, getPostDetails,
+  addPost, getPostDetails, removePost,
   incrementNumberPostComments, decrementNumberPostComments
 } = require( `./post` )
 
@@ -62,13 +61,11 @@ module.exports = {
   // TOS
   addTOS,
   // Post
-  addPost, getPostDetails,
+  addPost, getPostDetails, removePost,
   incrementNumberPostComments, decrementNumberPostComments,
   // Vote
   addVote, removeVote,
 
-  // getUserDetails,
-  // removeCommentFromPost,
-  removePost,
+  // removePost,
   updateUserName
 }

@@ -1,5 +1,6 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
+const { aggregateData, aggregateDataToTransact } = require( `./utils` )
 const { 
   Blog, Post, postFromItem, commentFromItem, voteFromItem 
 } = require( `../entities` )
@@ -148,6 +149,53 @@ const _addCommentToComments = ( comment, comments, replyChain ) => {
 }
 
 /**
+ * Removes the post and its details from the table.
+ * @param {String} tableName The name of the DynamoDB table.
+ * @param {Object} post      The post remove from the table.
+ */
+const removePost = async ( tableName, post ) => {
+  if ( typeof tableName == `undefined` )
+    throw Error( `Must give the name of the DynamoDB table` )
+  if ( typeof post == `undefined` ) throw new Error( `Must give post` )
+  const post_details = await getPostDetails( tableName, post )
+  if ( post_details.error ) return post_details
+  let aggregate_data = {}
+  aggregate_data[`vote`] = []
+  aggregate_data[`comment`] = []
+  aggregate_data[`user`] = {}
+  Object.values( post_details.comments ).forEach( ( comment ) => {
+    aggregate_data = aggregateData( comment, aggregate_data )
+  } )
+  const transact_items = aggregateDataToTransact( aggregate_data, tableName )
+  transact_items.push( {
+    Delete: {
+      TableName: tableName,
+      Key: post.key(),
+      ConditionExpression: `attribute_exists(PK)`
+    }
+  } )
+  try {
+    // transactWriteItems is limited to 25 requests per write operation.
+    if ( transact_items.length <= 25 )
+      await dynamoDB.transactWriteItems( { 
+        TransactItems: transact_items 
+      } ).promise()
+    else {
+      let i, j
+      for ( i = 0, j = transact_items.length; i < j; i += 25 ) {
+        await dynamoDB.transactWriteItems( { 
+          TransactItems: transact_items.slice( i, i + 25 ) 
+        } ).promise()
+      }
+    }
+    return post
+  } catch( error ) { 
+    console.log( `error`, error )
+    return { 'error': `Could not remove post` } 
+  }
+}
+
+/**
  * Increments the number of comments in the DynamoDB post item.
  * @param {String} tableName The name of the DynamoDB table.
  * @param {Object} post      The post to increment the number of comments.
@@ -218,6 +266,6 @@ const decrementNumberPostComments = async ( tableName, post ) => {
 }
 
 module.exports = { 
-  addPost, getPostDetails,
+  addPost, getPostDetails, removePost,
   incrementNumberPostComments, decrementNumberPostComments
 }
