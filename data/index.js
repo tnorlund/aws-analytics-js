@@ -1,6 +1,3 @@
-// const { removePost } = require( `./removePost` )
-const { updateUserName } = require( `./updateUserName` )
-
 const {
   addBlog, getBlog, updateBlog, resetBlog,
   incrementNumberBlogUsers, decrementNumberBlogUsers,
@@ -28,7 +25,7 @@ const {
 } = require( `./post` )
 
 const {
-  addUser, getUser, getUserDetails,
+  addUser, getUser, getUserDetails, updateUserName,
   incrementNumberUserFollows, decrementNumberUserFollows,
   incrementNumberUserComments, decrementNumberUserComments,
   incrementNumberUserVotes, decrementNumberUserVotes
@@ -54,7 +51,7 @@ module.exports = {
   // Project Follow
   addProjectFollow, removeProjectFollow,
   // User
-  addUser, getUser, getUserDetails, 
+  addUser, getUser, getUserDetails, updateUserName,
   incrementNumberUserFollows, decrementNumberUserFollows,
   incrementNumberUserComments, decrementNumberUserComments,
   incrementNumberUserVotes, decrementNumberUserVotes,
@@ -65,7 +62,4 @@ module.exports = {
   incrementNumberPostComments, decrementNumberPostComments,
   // Vote
   addVote, removeVote,
-
-  // removePost,
-  updateUserName
 }

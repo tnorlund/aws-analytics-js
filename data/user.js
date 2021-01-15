@@ -111,6 +111,84 @@ const getUserDetails = async ( tableName, user ) => {
 }
 
 /**
+ * Updates the name of a user.
+ * @param {String} tableName The name of the DynamoDB table.
+ * @param {Object} user      The user to change the name of.
+ * @param {String} username  The new name of the user.
+ */
+const updateUserName = async ( tableName, user, username ) => {
+  if ( typeof tableName == `undefined` )
+    throw new Error( `Must give the name of the DynamoDB table` )
+  if ( typeof user == `undefined` ) throw new Error( `Must give user` )
+  if ( typeof username == `undefined` ) throw new Error( `Must give username` )
+  const user_details = await getUserDetails( tableName, user )
+  if ( user_details.error ) return user_details
+  const transact_items = []
+  // Update the user item
+  transact_items.push( { Update: {
+    TableName: tableName,
+    Key: user.key(),
+    ConditionExpression: `attribute_exists(PK)`,
+    UpdateExpression: `SET #user = :user`,
+    ExpressionAttributeNames: { '#user': `Name` },
+    ExpressionAttributeValues: { ':user': { 'S': username } },
+  } } )
+  // Update the follows
+  user_details.follows.forEach( ( follow ) => {
+    transact_items.push( { Update: {
+      TableName: tableName,
+      Key: follow.key(),
+      ConditionExpression: `attribute_exists(PK)`,
+      UpdateExpression: `SET #user = :user`,
+      ExpressionAttributeNames: { '#user': `UserName` },
+      ExpressionAttributeValues: { ':user': { 'S': username } }
+    } } )
+  } )
+  // Update the comments
+  user_details.comments.forEach( ( comment ) => {
+    transact_items.push( { Update: {
+      TableName: tableName,
+      Key: comment.key(),
+      ConditionExpression: `attribute_exists(PK)`,
+      UpdateExpression: `SET #user = :user`,
+      ExpressionAttributeNames: { '#user': `User` },
+      ExpressionAttributeValues: { ':user': { 'S': username } }
+    } } )
+  } )
+  // Update the votes
+  user_details.votes.forEach( ( vote ) => {
+    transact_items.push( { Update: {
+      TableName: tableName,
+      Key: vote.key(),
+      ConditionExpression: `attribute_exists(PK)`,
+      UpdateExpression: `SET #user = :user`,
+      ExpressionAttributeNames: { '#user': `UserName` },
+      ExpressionAttributeValues: { ':user': { 'S': username } }
+    } } )
+  } )
+  try {
+    // transactWriteItems is limited to 25 requests per write operation.
+    if ( transact_items.length <= 25 )
+      await dynamoDB.transactWriteItems( { 
+        TransactItems: transact_items 
+      } ).promise()
+    else {
+      let i, j
+      for ( i = 0, j = transact_items.length; i < j; i += 25 ) {
+        await dynamoDB.transactWriteItems( { 
+          TransactItems: transact_items.slice( i, i + 25 ) 
+        } ).promise()
+      }
+    }
+    user.name = username
+    return user
+  } catch( error ) { 
+    console.log( `error`, error )
+    return { 'error': `Could not update username` } 
+  }
+}
+
+/**
  * Increments a user's number of projects that they follow in DynamoDB.
  * @param {String} tableName The name of the DynamoDB table.
  * @param {Object} user      The user to increment the number of projects they
@@ -303,7 +381,7 @@ const decrementNumberUserVotes = async ( tableName, user ) => {
 }
 
 module.exports = {
-  addUser, getUser, getUserDetails,
+  addUser, getUser, getUserDetails, updateUserName,
   incrementNumberUserFollows, decrementNumberUserFollows,
   incrementNumberUserComments, decrementNumberUserComments,
   incrementNumberUserVotes, decrementNumberUserVotes
