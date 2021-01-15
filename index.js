@@ -1,3 +1,4 @@
 const entities = require( `./entities` )
+const data = require( `./data` )
 
-module.exports = { ...entities }
+module.exports = { ...entities, ...data }
