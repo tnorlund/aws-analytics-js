@@ -26,6 +26,7 @@
     "collectCoverage": true
   },
   "dependencies": {
-    "aws-sdk": "^2.821.0"
+    "aws-sdk": "^2.821.0",
+    "analytics": "git://github.com/tnorlund/aws-analytics-js#80f29813815bb9e2"
   }
 }
