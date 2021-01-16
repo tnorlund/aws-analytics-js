@@ -1,4 +1,4 @@
-const { User } = require( `../entities` )
+const { User, Session } = require( `../entities` )
 
 /**
  * Converts an ISO formatted date into a Date object.
@@ -54,7 +54,7 @@ const aggregateData = ( comment, data ) => {
 }
 
 /**
- * Transforms the aggregate user and vote data to 
+ * Transforms the aggregate user and vote data to a DynamoDB Transact Items.
  * @param {Object} data      The aggregate user and vote data.
  * @param {String} tableName The name of the DynamoDB table.
  */
@@ -107,6 +107,62 @@ const aggregateDataToTransact = ( data, tableName ) => {
   return transact_items
 }
 
+/**
+ * Creates a session from an array of visits.
+ * @param {[Object]} visits The array of visits to create the session from.
+ * @returns
+ */
+const sessionFromVisits = ( visits ) => {
+  if ( typeof visits == `undefined` ) throw new Error( `Must pass visits` )
+  const time_delta = visits.slice( 1, visits.length ).map( 
+    ( element, index ) => { 
+      return( visits[ index + 1 ].date - visits[index ].date ) 
+    } 
+  )
+  const totalTime = time_delta.reduce( ( a, b ) => a + b, 0 )
+  const session = new Session( {
+    sessionStart: visits[0].date,
+    ip: visits[0].ip,
+    avgTime: totalTime / time_delta.length,
+    totalTime
+  } )
+  return session
+}
+
+// https://github.com/aws/aws-sdk-js/issues/2464#issuecomment-503524701
+/**
+ * A wrapper for transactWriteItems that allows for errors
+ * @param {Object} transactData The data required for transactWriteItems 
+ * @returns
+ */
+const executeTransactWrite = async ( { client, params } ) => {
+  const transactionRequest = client.transactWriteItems( params );
+  let cancellationReasons;
+  transactionRequest.on( `extractError`, ( response ) => {
+    try {
+      cancellationReasons = JSON.parse( 
+        response.httpResponse.body.toString() 
+      ).CancellationReasons;
+    } catch ( err ) {
+      // suppress this just in case some types of errors aren't JSON parse-able
+      console.error( `Error extracting cancellation error`, err );
+    }
+  } );
+  return new Promise( ( resolve, reject ) => {
+    transactionRequest.send( ( err, response ) => {
+      if ( err ) {
+        err.cancellationReasons = cancellationReasons
+        return reject( err );
+      }
+      return resolve( response );
+    } );
+  } );
+}
+
 module.exports = {
-  parseDate, aggregateData, aggregateDataToTransact
+  parseDate,
+  aggregateData,
+  aggregateDataToTransact,
+  sessionFromVisits,
+  executeTransactWrite
 }

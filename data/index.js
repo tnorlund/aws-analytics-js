@@ -24,6 +24,10 @@ const {
   incrementNumberPostComments, decrementNumberPostComments
 } = require( `./post` )
 
+const { 
+  addSession, getSession 
+} = require( `./session` )
+
 const {
   addUser, getUser, getUserDetails, updateUserName,
   incrementNumberUserFollows, decrementNumberUserFollows,
@@ -55,6 +59,11 @@ module.exports = {
   incrementNumberProjectFollows, decrementNumberProjectFollows,
   // Project Follow
   addProjectFollow, removeProjectFollow,
+  // Post
+  addPost, getPostDetails, removePost,
+  incrementNumberPostComments, decrementNumberPostComments,
+  // Session
+  addSession, getSession,
   // User
   addUser, getUser, getUserDetails, updateUserName,
   incrementNumberUserFollows, decrementNumberUserFollows,
@@ -62,9 +71,6 @@ module.exports = {
   incrementNumberUserVotes, decrementNumberUserVotes,
   // TOS
   addTOS,
-  // Post
-  addPost, getPostDetails, removePost,
-  incrementNumberPostComments, decrementNumberPostComments,
   // Vote
   addVote, removeVote,
   // Visitor

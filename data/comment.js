@@ -3,7 +3,11 @@ const dynamoDB = new AWS.DynamoDB()
 const { 
   incrementNumberUserComments, incrementNumberUserVotes 
 } = require( `./user` )
-const { aggregateData, aggregateDataToTransact } = require( `./utils` )
+const { 
+  aggregateData, 
+  aggregateDataToTransact, 
+  executeTransactWrite 
+} = require( `./utils` )
 const { incrementNumberPostComments, getPostDetails } = require( `./post` )
 const { Comment, Vote, commentFromItem, Post } = require( `../entities` )
 
@@ -75,21 +79,22 @@ const addComment = async ( tableName, user, post, text, replyChain ) => {
       voteNumber: 1,
     } )
   }
+  const params = {
+    TransactItems: [
+      { Put: {
+        TableName: tableName,
+        Item: comment.toItem(),
+        ConditionExpression: `attribute_not_exists(PK)`
+      } },
+      { Put: {
+        TableName: tableName,
+        Item: vote.toItem(),
+        ConditionExpression: `attribute_not_exists(PK)`
+      } }
+    ]
+  }
   try {
-    await dynamoDB.transactWriteItems( {
-      TransactItems: [
-        { Put: {
-          TableName: tableName,
-          Item: comment.toItem(),
-          ConditionExpression: `attribute_not_exists(PK)`
-        } },
-        { Put: {
-          TableName: tableName,
-          Item: vote.toItem(),
-          ConditionExpression: `attribute_not_exists(PK)`
-        } }
-      ]
-    } ).promise()
+    await executeTransactWrite( { client: dynamoDB, params } )
     return { comment, vote }
   } catch ( error ) {
     let errorMessage = `Could not add comment to post`

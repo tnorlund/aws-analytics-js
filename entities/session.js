@@ -7,7 +7,7 @@ class Session {
    */
   constructor( { sessionStart, ip, avgTime, totalTime } ) {
     if ( typeof sessionStart === `undefined` )
-      throw new Error( `Must give the session start of the visit` )
+      throw new Error( `Must give the session start` )
     this.sessionStart = ( typeof sessionStart === `string` ) ?
       parseDate( sessionStart ) : sessionStart
     if ( typeof ip === `undefined` )
