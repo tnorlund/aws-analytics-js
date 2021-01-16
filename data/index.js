@@ -35,6 +35,11 @@ const { addTOS } = require( `./tos` )
 
 const { addVote, removeVote } = require( `./vote` )
 
+const { 
+  addVisitor, getVisitor,
+  incrementNumberSessions, decrementNumberSessions
+} = require( `./visitor` )
+
 module.exports = {
   // Blog
   addBlog, getBlog, updateBlog, resetBlog,
@@ -62,4 +67,7 @@ module.exports = {
   incrementNumberPostComments, decrementNumberPostComments,
   // Vote
   addVote, removeVote,
+  // Visitor
+  addVisitor, getVisitor,
+  incrementNumberSessions, decrementNumberSessions
 }
