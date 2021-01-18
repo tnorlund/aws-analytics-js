@@ -1,6 +1,6 @@
 {
-  "name": "analytics",
-  "version": "1.0.0",
+  "name": "@tnorlund/analytics",
+  "version": "1.0.1",
   "description": "A package for accessing the Blog DB using Node.",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,9 @@
     "collectCoverage": true
   },
   "dependencies": {
-    "aws-sdk": "^2.821.0",
-    "analytics": "git://github.com/tnorlund/aws-analytics-js#80f29813815bb9e2"
-  }
+    "aws-sdk": "^2.821.0"
+  },
+  "keywords": [
+    "dynamodb"
+  ]
 }

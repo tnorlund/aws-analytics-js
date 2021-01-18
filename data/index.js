@@ -6,10 +6,19 @@ const {
 } = require( `./blog` )
 
 const { 
+  addBrowser, getBrowser
+} = require( `./browser` )
+
+const { 
   addComment, getComment, removeComment,
   incrementNumberCommentVotes, decrementNumberCommentVotes,
   incrementCommentVote, decrementCommentVote
 } = require( `./comment` )
+
+const {
+  addLocation, getLocation
+} = require( `./location` )
+
 const {
   addProject, getProject, getProjectDetails, updateProject, removeProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows
@@ -37,6 +46,10 @@ const {
 
 const { addTOS } = require( `./tos` )
 
+const { 
+  addVisit, addVisits, getVisit 
+} = require( `./visit` )
+
 const { addVote, removeVote } = require( `./vote` )
 
 const { 
@@ -50,10 +63,14 @@ module.exports = {
   incrementNumberBlogUsers, decrementNumberBlogUsers,
   incrementNumberBlogPosts, decrementNumberBlogPosts,
   incrementNumberBlogProjects, decrementNumberBlogProjects,
+  // Browser
+  addBrowser, getBrowser,
   // Comment
   addComment, getComment, removeComment,
   incrementNumberCommentVotes, decrementNumberCommentVotes,
   incrementCommentVote, decrementCommentVote,
+  // Location
+  addLocation, getLocation,
   // Project
   addProject, getProject, getProjectDetails, updateProject, removeProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows,
@@ -73,6 +90,8 @@ module.exports = {
   addTOS,
   // Vote
   addVote, removeVote,
+  // Visit
+  addVisit, addVisits, getVisit,
   // Visitor
   addVisitor, getVisitor,
   incrementNumberSessions, decrementNumberSessions

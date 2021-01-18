@@ -1,6 +1,8 @@
 const AWS = require( `aws-sdk` )
 const dynamoDB = new AWS.DynamoDB()
-const { visitorFromItem } = require( `../entities` )
+const { 
+  visitorFromItem, sessionFromItem, browserFromItem 
+} = require( `../entities` )
 
 /**
  * Adds a visitor to the DynamoDB table.
@@ -47,6 +49,53 @@ const getVisitor = async ( tableName, visitor ) => {
     return { visitor: visitorFromItem( result.Item ) }
   } catch( error ) {
     let errorMessage = `Could not get visitor`
+    if ( error.code == `ResourceNotFoundException` )
+      errorMessage = `Table does not exist`
+    return { 'error': errorMessage }
+  }
+}
+
+/**
+ * Retrieves the visitor and their details from DynamoDB.
+ * @param   {String} tableName The name of the DynamoDB table.
+ * @param   {Object} visitor   The visitor requested.
+ * @returns {Object}           Whether the visitor was retrieved from the table
+ *                             or the error that occurred.
+ */
+const getVisitorDetails = async ( tableName, visitor ) => {
+  if ( typeof tableName == `undefined` )
+    throw new Error( `Must give the name of the DynamoDB table` )
+  if ( typeof visitor == `undefined` ) throw new Error( `Must give visitor` )
+  try {
+    const result = await dynamoDB.query( {
+      TableName: tableName,
+      KeyConditionExpression: `#pk = :pk`,
+      ExpressionAttributeNames: { '#pk': `PK` },
+      ExpressionAttributeValues: { ':pk': visitor.pk() },
+      ScanIndexForward: true
+    } ).promise()
+    if ( result.Items.length == 0 ) return { error: `Visitor does not exist` }
+    // Iterate over the results and parse them into their matching objects.
+    let visitor_details = {
+      browsers: [], sessions: []
+    }
+    result.Items.map( ( item ) => {
+      switch ( item.Type.S ) {
+        case `visitor`:
+          visitor_details[`visitor`] = visitorFromItem( item )
+          break
+        case `session`:
+          visitor_details.sessions.push( sessionFromItem( item ) )
+          break
+        case `browser`:
+          visitor_details.browsers.push( browserFromItem( item ) )
+          break
+        default: throw Error( `Could not parse type ${ item.Type.S }` )
+      }
+    } )
+    return visitor_details
+  } catch( error ) {
+    let errorMessage = `Could not get visitor details`
     if ( error.code == `ResourceNotFoundException` )
       errorMessage = `Table does not exist`
     return { 'error': errorMessage }
@@ -114,6 +163,6 @@ const decrementNumberSessions = async ( tableName, visitor ) => {
 }
 
 module.exports = { 
-  addVisitor, getVisitor,
+  addVisitor, getVisitor, getVisitorDetails,
   incrementNumberSessions, decrementNumberSessions
 }
