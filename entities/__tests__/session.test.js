@@ -1,20 +1,20 @@
 const { Session, sessionFromItem } = require( `../` )
 
-const ip = `0.0.0.0`
+/** The unique ID for each visitor */
+const id = `171a0329-f8b2-499c-867d-1942384ddd5f`
 const avgTime = 10.0
 const totalTime = 100.0
 const sessionStart = new Date()
 
 const validSessions = [
-  { ip, avgTime, totalTime, sessionStart },
-  { ip, avgTime: avgTime.toString(), totalTime, sessionStart },
-  { ip, avgTime, totalTime: totalTime.toString(), sessionStart },
-  { ip, avgTime, totalTime, sessionStart: sessionStart.toISOString() }
+  { id, avgTime, totalTime, sessionStart },
+  { id, avgTime: avgTime.toString(), totalTime, sessionStart },
+  { id, avgTime, totalTime: totalTime.toString(), sessionStart },
+  { id, avgTime, totalTime, sessionStart: sessionStart.toISOString() }
 ]
 
 const invalidSessions = [
   {},
-  { sessionStart, ip: `something` },
   { sessionStart }
 ]
 
@@ -23,7 +23,7 @@ describe( `session object`, () => {
     `valid constructor`,
     parameter => {
       const session = new Session( parameter )
-      expect( session.ip ).toEqual( ip )
+      expect( session.id ).toEqual( id )
       expect( session.avgTime ).toEqual( parseFloat( avgTime ) )
       expect( session.totalTime ).toEqual( parseFloat( totalTime ) )
       expect( session.sessionStart ).toEqual( sessionStart )
@@ -31,8 +31,8 @@ describe( `session object`, () => {
   )
 
   test( `valid constructor`, () => { 
-    const session =  new Session( { ip, sessionStart } )
-    expect( session.ip ).toEqual( ip )
+    const session =  new Session( { id, sessionStart } )
+    expect( session.id ).toEqual( id )
     expect( session.avgTime ).toEqual( undefined )
     expect( session.totalTime ).toEqual( undefined )
     expect( session.sessionStart ).toEqual( sessionStart )
@@ -43,38 +43,38 @@ describe( `session object`, () => {
     parameter => expect( () => new Session( parameter ) ).toThrow()
   )
 
-  test( `pk`, () => expect( new Session( { ip, avgTime, totalTime, sessionStart } ).pk() ).toEqual( {
-    'S': `VISITOR#${ ip }`
+  test( `pk`, () => expect( new Session( { id, avgTime, totalTime, sessionStart } ).pk() ).toEqual( {
+    'S': `VISITOR#${ id }`
   } ) )
 
-  test( `key`, () => expect( new Session( { ip, avgTime, totalTime, sessionStart } ).key() ).toEqual( {
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `key`, () => expect( new Session( { id, avgTime, totalTime, sessionStart } ).key() ).toEqual( {
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `SESSION#${ sessionStart.toISOString() }` }
   } ) )
 
-  test( `gsi2pk`, () => expect( new Session( { ip, avgTime, totalTime, sessionStart } ).gsi2pk() ).toEqual( {
-    'S': `SESSION#${ ip }#${ sessionStart.toISOString() }`
+  test( `gsi2pk`, () => expect( new Session( { id, avgTime, totalTime, sessionStart } ).gsi2pk() ).toEqual( {
+    'S': `SESSION#${ id }#${ sessionStart.toISOString() }`
   } ) )
 
-  test( `gsi2`, () => expect( new Session( { ip, avgTime, totalTime, sessionStart } ).gsi2() ).toEqual( {
-    'GSI2PK': { 'S': `SESSION#${ ip }#${ sessionStart.toISOString() }` },
+  test( `gsi2`, () => expect( new Session( { id, avgTime, totalTime, sessionStart } ).gsi2() ).toEqual( {
+    'GSI2PK': { 'S': `SESSION#${ id }#${ sessionStart.toISOString() }` },
     'GSI2SK': { 'S': `#SESSION` }
   } ) )
 
-  test( `toItem`, () => expect( new Session( { ip, avgTime, totalTime, sessionStart } ).toItem() ).toEqual( {
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `toItem`, () => expect( new Session( { id, avgTime, totalTime, sessionStart } ).toItem() ).toEqual( {
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `SESSION#${ sessionStart.toISOString() }` },
-    'GSI2PK': { 'S': `SESSION#${ ip }#${ sessionStart.toISOString() }` },
+    'GSI2PK': { 'S': `SESSION#${ id }#${ sessionStart.toISOString() }` },
     'GSI2SK': { 'S': `#SESSION` },
     'Type': { 'S': `session` },
     'AverageTime': { 'N': avgTime.toString() },
     'TotalTime': { 'N': totalTime.toString() }
   } ) )
 
-  test( `toItem`, () => expect( new Session( { ip, sessionStart } ).toItem() ).toEqual( {
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `toItem`, () => expect( new Session( { id, sessionStart } ).toItem() ).toEqual( {
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `SESSION#${ sessionStart.toISOString() }` },
-    'GSI2PK': { 'S': `SESSION#${ ip }#${ sessionStart.toISOString() }` },
+    'GSI2PK': { 'S': `SESSION#${ id }#${ sessionStart.toISOString() }` },
     'GSI2SK': { 'S': `#SESSION` },
     'Type': { 'S': `session` },
     'AverageTime': { 'NULL': true },
@@ -82,12 +82,12 @@ describe( `session object`, () => {
   } ) )
 
   test( `sessionFromItem`, () => {
-    const session = new Session( { ip, avgTime, totalTime, sessionStart } )
+    const session = new Session( { id, avgTime, totalTime, sessionStart } )
     expect( sessionFromItem( session.toItem() ) ).toEqual( session )
   } )
 
   test( `sessionFromItem`, () => {
-    const session = new Session( { ip, sessionStart } )
+    const session = new Session( { id, sessionStart } )
     expect( sessionFromItem( session.toItem() ) ).toEqual( session )
   } )
 } )

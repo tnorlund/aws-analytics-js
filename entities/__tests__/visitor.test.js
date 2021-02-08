@@ -1,18 +1,18 @@
 const { Visitor, visitorFromItem } = require( `..` )
 
-const ip = `0.0.0.0`
+/** The unique ID for each visitor */
+const id = `171a0329-f8b2-499c-867d-1942384ddd5f`
 
 const validVisitors = [
-  { ip },
-  { ip, numberSessions: `0` },
-  { ip, numberSessions: 0 },
+  { id },
+  { id, numberSessions: `0` },
+  { id, numberSessions: 0 },
 ]
 
 const invalidVisitors = [
   {},
-  { ip: `something` },
-  { ip, numberSessions: `something` },
-  { ip, numberSessions: `-1` }
+  { id, numberSessions: `something` },
+  { id, numberSessions: `-1` }
 ]
 
 describe( `visitor object`, () => {
@@ -20,7 +20,7 @@ describe( `visitor object`, () => {
     `valid constructor`,
     parameter => {
       const visitor = new Visitor( parameter )
-      expect( visitor.ip ).toEqual( ip )
+      expect( visitor.id ).toEqual( id )
       expect( visitor.numberSessions ).toEqual( 0 )
     }
   )
@@ -30,22 +30,24 @@ describe( `visitor object`, () => {
     parameter => expect( () => new Visitor( parameter ) ).toThrow()
   )
 
-  test( `pk`, () => expect( new Visitor( { ip } ).pk() ).toEqual( { 'S': `VISITOR#${ ip }` } ) )
+  test( `pk`, () => expect( new Visitor( { id } ).pk() ).toEqual( { 
+    'S': `VISITOR#${ id }` 
+  } ) )
 
-  test( `key`, () => expect( new Visitor( { ip } ).key() ).toEqual( {
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `key`, () => expect( new Visitor( { id } ).key() ).toEqual( {
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `#VISITOR` }
   } ) )
 
-  test( `toItem`, () => expect( new Visitor( { ip } ).toItem() ).toEqual( {
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `toItem`, () => expect( new Visitor( { id } ).toItem() ).toEqual( {
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `#VISITOR` },
     'Type': { 'S': `visitor` },
     'NumberSessions': { 'N': `0` }
   } ) )
 
   test( `visitorFromItem`, () => {
-    const visitor = new Visitor( { ip } )
+    const visitor = new Visitor( { id } )
     expect( visitorFromItem( visitor.toItem() ) ).toEqual( visitor )
   } )
 } )

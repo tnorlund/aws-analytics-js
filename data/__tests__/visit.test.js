@@ -3,14 +3,17 @@ const {
 } = require( `../` )
 const { Visit } = require( `../../entities` )
 
-const visit = new Visit( {
-  date: new Date(), 
-  ip: `0.0.0.0`, 
-  user: `0`, 
-  title: `Tyler Norlund`, 
-  slug: `/`, 
-  sessionStart: new Date()
-} )
+/** The date-time of the page visit */
+const date = new Date()
+/** The unique ID for each visitor */
+const id = `171a0329-f8b2-499c-867d-1942384ddd5f`
+const user = 0
+const title = `Tyler Norlund`
+const slug = `/`
+/** The date-time the session starts */
+const sessionStart = new Date()
+
+const visit = new Visit( { date, id, user, title, slug, sessionStart } )
 
 describe( `addVisit`, () => {
   test( `A visit can be added to the table`, async () => {

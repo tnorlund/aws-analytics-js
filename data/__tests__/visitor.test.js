@@ -1,16 +1,20 @@
-const { 
+const {
   addBrowser, addSession,
-  addVisitor, getVisitor,
+  addVisitor, getVisitor, getVisitorDetails,
   incrementNumberSessions, decrementNumberSessions
 } = require( `../` )
 const { Visitor, Browser, Session } = require( `../../entities` )
-const { getVisitorDetails } = require( `../visitor` )
 
-const visitor = new Visitor( { ip: `0.0.0.0` } )
+/** The unique ID for each visitor */
+const id = `171a0329-f8b2-499c-867d-1942384ddd5f`
+/** The visitor's IP address */
+const ip = `0.0.0.0`
+const visitor = new Visitor( { id } )
 const browser = new Browser( {
-  app: `Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) `
+  userAgent: `Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) `
   + `AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Mobile/15E148`
   + ` Safari/604.1`,
+  id,
   ip: `0.0.0.0`,
   width: 414,
   height: 896,
@@ -24,7 +28,7 @@ const browser = new Browser( {
   dateAdded: new Date()
 } )
 const session = new Session( {
-  ip: `0.0.0.0`, avgTime: 10.0, totalTime: 100.0, sessionStart: new Date()
+  id, avgTime: 10.0, totalTime: 100.0, sessionStart: new Date()
 } )
 
 describe( `addVisitor`, () => {
@@ -163,7 +167,7 @@ describe( `decrementNumberSessions`, () => {
   test( `The number of sessions the visitor has can be decremented`, 
     async () => { 
       let visitor_with_sessions = new Visitor( { 
-        ip: `0.0.0.0`, numberSessions: 2 
+        ip, id, numberSessions: 2 
       } )
       let result = await addVisitor( `test-table`, visitor_with_sessions )
       result = await decrementNumberSessions( 

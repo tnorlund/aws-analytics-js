@@ -6,31 +6,30 @@ const {
   Visitor, Session 
 } = require( `../../entities` )
 
+/** The unique ID for each visitor */
+const id = `171a0329-f8b2-499c-867d-1942384ddd5f`
+/** The average time spent on each page */
+const avgTime = 10.0
+/** The total time spent on pages */
+const totalTime = 100.0
+/** The date-time the session starts */
+const sessionStart = new Date()
+const visitor = new Visitor( { id } )
+const session = new Session( { id, avgTime, totalTime, sessionStart } )
+
 describe( `addSession`, () => {
   test( `A session can be added to the table`, async () => {
-    const visitor = new Visitor( { ip: `0.0.0.0` } )
-    const session = new Session( {
-      ip: `0.0.0.0`, avgTime: 10.0, totalTime: 100.0, sessionStart: new Date()
-    } )
     await addVisitor( `test-table`, visitor )
     const result = await addSession( `test-table`, visitor, session )
     expect( result ).toEqual( { session } )
   } )
 
   test( `Returns an error when the table does not exists`, async () => {
-    const visitor = new Visitor( { ip: `0.0.0.0` } )
-    const session = new Session( {
-      ip: `0.0.0.0`, avgTime: 10.0, totalTime: 100.0, sessionStart: new Date()
-    } )
     const result = await addSession( `not-a-table`, visitor, session )
     expect( result ).toEqual( { error: `Table does not exist` } )
   } )
 
   test( `Returns an error when the session exists`, async () => {
-    const visitor = new Visitor( { ip: `0.0.0.0` } )
-    const session = new Session( {
-      ip: `0.0.0.0`, avgTime: 10.0, totalTime: 100.0, sessionStart: new Date()
-    } )
     await addVisitor( `test-table`, visitor )
     await addSession( `test-table`, visitor, session )
     const result = await addSession( `test-table`, visitor, session )
@@ -38,16 +37,11 @@ describe( `addSession`, () => {
   } )
 
   test( `Returns an error when the visitor does not exists`, async () => {
-    const visitor = new Visitor( { ip: `0.0.0.0` } )
-    const session = new Session( {
-      ip: `0.0.0.0`, avgTime: 10.0, totalTime: 100.0, sessionStart: new Date()
-    } )
     const result = await addSession( `test-table`, visitor, session )
     expect( result ).toEqual( { error: `Visitor does not exist` } )
   } )
 
   test( `Throws an error when no session object is given`, async () => {
-    const visitor = new Visitor( { ip: `0.0.0.0` } )
     await expect(
       addSession( `test-table`, visitor )
     ).rejects.toThrow( `Must give session` )
@@ -68,10 +62,6 @@ describe( `addSession`, () => {
 
 describe( `getSession`, () => {
   test( `A session can be queried from table`, async () => {
-    const visitor = new Visitor( { ip: `0.0.0.0` } )
-    const session = new Session( {
-      ip: `0.0.0.0`, avgTime: 10.0, totalTime: 100.0, sessionStart: new Date()
-    } )
     await addVisitor( `test-table`, visitor )
     await addSession( `test-table`, visitor, session )
     const result = await getSession( `test-table`, session )
@@ -79,17 +69,11 @@ describe( `getSession`, () => {
   } )
 
   test( `Returns an error when the table does not exists`, async () => {
-    const session = new Session( {
-      ip: `0.0.0.0`, avgTime: 10.0, totalTime: 100.0, sessionStart: new Date()
-    } )
     const result = await getSession( `not-a-table`, session )
     expect( result ).toEqual( { error: `Table does not exist` } )
   } )
 
   test( `Returns an error when the session does not exists`, async () => {
-    const session = new Session( {
-      ip: `0.0.0.0`, avgTime: 10.0, totalTime: 100.0, sessionStart: new Date()
-    } )
     const result = await getSession( `test-table`, session )
     expect( result ).toEqual( { error: `Session does not exist` } )
   } )

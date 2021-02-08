@@ -1,7 +1,9 @@
 const { Browser, browserFromItem } = require( `..` )
 
-const app = `Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Mobile/15E148 Safari/604.1`
-const ip = `0.0.0.0`
+const userAgent = `Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Mobile/15E148 Safari/604.1`
+/** The unique ID for each visitor */
+const id = `171a0329-f8b2-499c-867d-1942384ddd5f`
+
 const width = 414
 const height = 896
 const dateVisited = new Date()
@@ -14,15 +16,14 @@ const version = `13.1.2`
 const dateAdded = new Date()
 
 const validBrowsers = [
-  { app, ip, width, height, dateVisited, device, deviceType, browser: browser_name, os, webkit, version, dateAdded },
-  { app, ip, width, height, dateVisited: dateVisited.toISOString(), device, deviceType, browser: browser_name, os, webkit, version, dateAdded },
-  { app, ip, width, height, dateVisited, device, deviceType, browser: browser_name, os, webkit, version, dateAdded: dateAdded.toISOString() }
+  { userAgent, id, width, height, dateVisited, device, deviceType, browser: browser_name, os, webkit, version, dateAdded },
+  { userAgent, id, width, height, dateVisited: dateVisited.toISOString(), device, deviceType, browser: browser_name, os, webkit, version, dateAdded },
+  { userAgent, id, width, height, dateVisited, device, deviceType, browser: browser_name, os, webkit, version, dateAdded: dateAdded.toISOString() }
 ]
 
 const invalidBrowsers = [
   {},
-  { app },
-  { app, ip: `something` }
+  { userAgent }
 ]
 
 describe( `browser object`, () => {
@@ -30,8 +31,8 @@ describe( `browser object`, () => {
     `valid constructor`,
     parameter => {
       const browser = new Browser( parameter )
-      expect( browser.app ).toEqual( app )
-      expect( browser.ip ).toEqual( ip )
+      expect( browser.userAgent ).toEqual( userAgent )
+      expect( browser.id ).toEqual( id )
       expect( browser.width ).toEqual( width )
       expect( browser.height ).toEqual( height )
       expect( browser.dateVisited ).toEqual( dateVisited )
@@ -46,9 +47,9 @@ describe( `browser object`, () => {
   )
 
   test( `valid constructor`, () => {
-    const browser = new Browser( { app, ip, width, height, dateVisited, dateAdded } )
-    expect( browser.app ).toEqual( app )
-    expect( browser.ip ).toEqual( ip )
+    const browser = new Browser( { userAgent, id, width, height, dateVisited, dateAdded } )
+    expect( browser.userAgent ).toEqual( userAgent )
+    expect( browser.id ).toEqual( id )
     expect( browser.width ).toEqual( width )
     expect( browser.height ).toEqual( height )
     expect( browser.dateVisited ).toEqual( dateVisited )
@@ -60,20 +61,20 @@ describe( `browser object`, () => {
     parameter => expect( () => new Browser( parameter ) ).toThrow()
   )
 
-  test( `pk`, () => expect( new Browser( { app, ip, width, height, dateVisited, dateAdded } ).pk() ).toEqual( {
-    'S': `VISITOR#${ ip }`
+  test( `pk`, () => expect( new Browser( { userAgent, id, width, height, dateVisited, dateAdded } ).pk() ).toEqual( {
+    'S': `VISITOR#${ id }`
   } ) )
 
-  test( `key`, () => expect( new Browser( { app, ip, width, height, dateVisited, dateAdded } ).key() ).toEqual( {
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `key`, () => expect( new Browser( { userAgent, id, width, height, dateVisited, dateAdded } ).key() ).toEqual( {
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `BROWSER#${ dateVisited.toISOString() }` }
   } ) )
 
-  test( `toItem`, () => expect( new Browser( { app, ip, width, height, dateVisited, device, deviceType, browser: browser_name, os, webkit, version, dateAdded } ).toItem() ).toEqual( {
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `toItem`, () => expect( new Browser( { userAgent, id, width, height, dateVisited, device, deviceType, browser: browser_name, os, webkit, version, dateAdded } ).toItem() ).toEqual( {
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `BROWSER#${ dateVisited.toISOString() }` },
     'Type': { 'S': `browser` },
-    'App': { 'S': app },
+    'UserAgent': { 'S': userAgent },
     'Width': { 'N': width.toString() },
     'Height': { 'N': height.toString() },
     'DateVisited': { 'S': dateVisited.toISOString() },
@@ -86,11 +87,11 @@ describe( `browser object`, () => {
     'DateAdded': { 'S': dateAdded.toISOString() }
   } ) )
 
-  test( `toItem`, () => expect( new Browser( { app, ip, width, height, dateVisited, dateAdded } ).toItem() ).toEqual( {
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `toItem`, () => expect( new Browser( { userAgent, id, width, height, dateVisited, dateAdded } ).toItem() ).toEqual( {
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `BROWSER#${ dateVisited.toISOString() }` },
     'Type': { 'S': `browser` },
-    'App': { 'S': app },
+    'UserAgent': { 'S': userAgent },
     'Width': { 'N': width.toString() },
     'Height': { 'N': height.toString() },
     'DateVisited': { 'S': dateVisited.toISOString() },
@@ -104,12 +105,12 @@ describe( `browser object`, () => {
   } ) )
 
   test( `browserFromItem`, () => {
-    const browser = new Browser( { app, ip, width, height, dateVisited, device, deviceType, browser: browser_name, os, webkit, version, dateAdded } )
+    const browser = new Browser( { userAgent, id, width, height, dateVisited, device, deviceType, browser: browser_name, os, webkit, version, dateAdded } )
     expect( browserFromItem( browser.toItem() ) ).toStrictEqual( browser )
   } )
 
   test( `browserFromItem`, () => {
-    const browser = new Browser( { app, ip, width, height, dateVisited, dateAdded } )
+    const browser = new Browser( { userAgent, id, width, height, dateVisited, dateAdded } )
     expect( browserFromItem( browser.toItem() ) ).toStrictEqual( browser )
   } )
 } )

@@ -4,6 +4,7 @@ const {
 const { Location } = require( `../../entities` )
 
 const location = new Location( {
+  id: `171a0329-f8b2-499c-867d-1942384ddd5f`,
   ip: `0.0.0.0`, 
   country: `US`, 
   region: `CA`, 

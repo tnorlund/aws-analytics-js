@@ -1,20 +1,18 @@
-const { parseDate, isIP, variableToItemAttribute } = require( `./utils` )
+const { parseDate, variableToItemAttribute } = require( `./utils` )
 
 class Session {
   /**
    * A session object.
    * @param {Object} details The details of the session.
    */
-  constructor( { sessionStart, ip, avgTime, totalTime } ) {
+  constructor( { sessionStart, id, avgTime, totalTime } ) {
     if ( typeof sessionStart === `undefined` )
       throw new Error( `Must give the session start` )
     this.sessionStart = ( typeof sessionStart === `string` ) ?
       parseDate( sessionStart ) : sessionStart
-    if ( typeof ip === `undefined` )
-      throw new Error( `Must give IP address` )
-    if ( !isIP( ip ) )
-      throw new Error( `Must pass a valid IP address` )
-    this.ip = ip
+    if ( typeof id === `undefined` )
+      throw new Error( `Must give ID` )
+    this.id = id
     this.avgTime = ( typeof avgTime === `undefined` ) ? 
       undefined : parseFloat( avgTime )
     this.totalTime = ( typeof totalTime === `undefined` ) ? 
@@ -25,7 +23,7 @@ class Session {
    * @returns {Object} The partition key.
    */
   pk() {
-    return variableToItemAttribute( `VISITOR#${ this.ip }` )
+    return variableToItemAttribute( `VISITOR#${ this.id }` )
   }
 
   /**
@@ -33,7 +31,7 @@ class Session {
    */
   key() {
     return {
-      'PK': variableToItemAttribute( `VISITOR#${ this.ip }` ),
+      'PK': variableToItemAttribute( `VISITOR#${ this.id }` ),
       'SK': variableToItemAttribute(
         `SESSION#${ this.sessionStart.toISOString() }`
       )
@@ -45,7 +43,7 @@ class Session {
    */
   gsi2pk() {
     return variableToItemAttribute( 
-      `SESSION#${ this.ip }#${ this.sessionStart.toISOString() }` 
+      `SESSION#${ this.id }#${ this.sessionStart.toISOString() }` 
     )
   }
 
@@ -55,7 +53,7 @@ class Session {
   gsi2() {
     return {
       'GSI2PK': variableToItemAttribute( 
-        `SESSION#${ this.ip }#${ this.sessionStart.toISOString() }` 
+        `SESSION#${ this.id }#${ this.sessionStart.toISOString() }` 
       ),
       'GSI2SK': variableToItemAttribute( `#SESSION` )
     }
@@ -83,7 +81,7 @@ class Session {
 const sessionFromItem = ( item ) => {
   return new Session( {
     sessionStart: item.GSI2PK.S.split( `#` )[2], 
-    ip: item.PK.S.split( `#` )[1], 
+    id: item.PK.S.split( `#` )[1], 
     avgTime: ( `N` in item.AverageTime ) ? item.AverageTime.N : undefined, 
     totalTime: ( `N` in item.TotalTime ) ? item.TotalTime.N : undefined
   } )

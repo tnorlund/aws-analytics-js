@@ -1,4 +1,4 @@
-const { parseDate, isIP, variableToItemAttribute } = require( `./utils` )
+const { parseDate, variableToItemAttribute } = require( `./utils` )
 
 class Browser {
   /**
@@ -6,17 +6,15 @@ class Browser {
    * @param {Object} details The details of the browser.
    */
   constructor( {
-    app, ip, width, height, dateVisited, device, deviceType, browser, os,
+    userAgent, id, width, height, dateVisited, device, deviceType, browser, os,
     webkit, version, dateAdded
   } ) {
-    if ( typeof app === `undefined` )
+    if ( typeof userAgent === `undefined` )
       throw new Error( `Must give userAgent` )
-    this.app = app
-    if ( typeof ip === `undefined` )
-      throw new Error( `Must give IP address` )
-    if ( !isIP( ip ) )
-      throw new Error( `Must pass a valid IP address` )
-    this.ip = ip
+    this.userAgent = userAgent
+    if ( typeof id === `undefined` )
+      throw new Error( `Must give ID` )
+    this.id = id
     this.width = parseInt( width )
     this.height = parseInt( height )
     this.dateVisited = ( typeof dateVisited === `string` ) ?
@@ -35,7 +33,7 @@ class Browser {
    * @returns {Object} The partition key.
    */
   pk() {
-    return variableToItemAttribute( `VISITOR#${ this.ip }` )
+    return variableToItemAttribute( `VISITOR#${ this.id }` )
   }
 
   /**
@@ -43,7 +41,7 @@ class Browser {
    */
   key() {
     return {
-      'PK': variableToItemAttribute( `VISITOR#${ this.ip }` ),
+      'PK': variableToItemAttribute( `VISITOR#${ this.id }` ),
       'SK': variableToItemAttribute(
         `BROWSER#${ this.dateVisited.toISOString() }`
       )
@@ -57,7 +55,7 @@ class Browser {
     return {
       ...this.key(),
       'Type': variableToItemAttribute( `browser` ),
-      'App': variableToItemAttribute( this.app ),
+      'UserAgent': variableToItemAttribute( this.userAgent ),
       'Width': variableToItemAttribute( this.width ),
       'Height': variableToItemAttribute( this.height ),
       'DateVisited': variableToItemAttribute( this.dateVisited.toISOString() ),
@@ -79,8 +77,8 @@ class Browser {
  */
 const browserFromItem = ( item ) => {
   return new Browser( {
-    app: item.App.S,
-    ip: item.PK.S.split( `#` )[1],
+    userAgent: item.UserAgent.S,
+    id: item.PK.S.split( `#` )[1],
     width: item.Width.N,
     height: item.Height.N,
     dateVisited: item.DateVisited.S,

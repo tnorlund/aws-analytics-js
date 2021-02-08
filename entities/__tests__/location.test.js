@@ -1,5 +1,7 @@
 const { Location, locationFromItem } = require( `..` )
 
+/** The unique ID for each visitor */
+const id = `171a0329-f8b2-499c-867d-1942384ddd5f`
 const ip = `0.0.0.0`
 const country = `US` 
 const region = `CA`
@@ -28,21 +30,22 @@ const tor = false
 const dateAdded = new Date()
 
 const validLocations = [
-  { ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded },
-  { ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded: dateAdded.toISOString() }
+  { id, ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded },
+  { id, ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded: dateAdded.toISOString() }
 ]
 
 const invalidLocations = [
   {},
-  { ip: `something` },
-  { ip },
-  { ip, country },
-  { ip, country, region },
-  { ip, country, region, city },
-  { ip, country, region, city, latitude: `something` },
-  { ip, country, region, city, latitude },
-  { ip, country, region, city, latitude, longitude: `something` },
-  { ip, country, region, city, latitude, longitude },
+  { id },
+  { id, ip: `something` },
+  { id, ip },
+  { id, ip, country },
+  { id, ip, country, region },
+  { id, ip, country, region, city },
+  { id, ip, country, region, city, latitude: `something` },
+  { id, ip, country, region, city, latitude },
+  { id, ip, country, region, city, latitude, longitude: `something` },
+  { id, ip, country, region, city, latitude, longitude },
 ]
 
 describe( `location object`, () => {
@@ -50,6 +53,7 @@ describe( `location object`, () => {
     `valid constructor`,
     parameter => {
       const location = new Location( parameter )
+      expect( location.id ).toEqual( id )
       expect( location.ip ).toEqual( ip )
       expect( location.country ).toEqual( country )
       expect( location.city ).toEqual( city )
@@ -69,19 +73,20 @@ describe( `location object`, () => {
     parameter => expect( () => new Location( parameter ) ).toThrow()
   )
 
-  test( `pk`, () => expect( new Location( { ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded } ).pk() ).toEqual( {
-    'S': `VISITOR#${ ip }`
+  test( `pk`, () => expect( new Location( { id, ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded } ).pk() ).toEqual( {
+    'S': `VISITOR#${ id }`
   } ) )
 
-  test( `key`, () => expect( new Location( { ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded } ).key() ).toEqual( {
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `key`, () => expect( new Location( { id, ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded } ).key() ).toEqual( {
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `#LOCATION` }
   } ) )
 
-  test( `toItem`, () => expect( new Location( { ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded } ).toItem() ).toEqual( { 
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `toItem`, () => expect( new Location( { id, ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded } ).toItem() ).toEqual( { 
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `#LOCATION` },
     'Type': { 'S': `location` },
+    'IP': { 'S': ip },
     'Country': { 'S': country },
     'Region': { 'S': region },
     'City': { 'S': city },
@@ -103,10 +108,11 @@ describe( `location object`, () => {
     'DateAdded': { 'S': dateAdded.toISOString() }
   } ) )
 
-  test( `toItem`, () => expect( new Location( { ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem: autonomousSystem_null, isp, proxy, vpn, tor, dateAdded } ).toItem() ).toEqual( { 
-    'PK': { 'S': `VISITOR#${ ip }` },
+  test( `toItem`, () => expect( new Location( { id, ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem: autonomousSystem_null, isp, proxy, vpn, tor, dateAdded } ).toItem() ).toEqual( { 
+    'PK': { 'S': `VISITOR#${ id }` },
     'SK': { 'S': `#LOCATION` },
     'Type': { 'S': `location` },
+    'IP': { 'S': ip },
     'Country': { 'S': country },
     'Region': { 'S': region },
     'City': { 'S': city },
@@ -129,12 +135,12 @@ describe( `location object`, () => {
   } ) )
 
   test( `locationFromItem`, () => {
-    const location = new Location(  { ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded } )
+    const location = new Location(  { id, ip, country, region, city, latitude, longitude, postalCode, timezone, domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded } )
     expect( locationFromItem( location.toItem() ) ).toStrictEqual( location )
   } )
 
   test( `locationFromItem`, () => {
-    const location = new Location(  { ip, country, region, city, latitude, longitude, timezone, domains:[], autonomousSystem: autonomousSystem_null, isp, proxy, vpn, tor, dateAdded } )
+    const location = new Location(  { id, ip, country, region, city, latitude, longitude, timezone, domains:[], autonomousSystem: autonomousSystem_null, isp, proxy, vpn, tor, dateAdded } )
     expect( locationFromItem( location.toItem() ) ).toEqual( { ...location, domains: undefined } )
   } )
 } )

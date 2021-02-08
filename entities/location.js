@@ -8,9 +8,12 @@ class Location {
    * @param {Object} details The details of the location.
    */
   constructor( {
-    ip, country, region, city, latitude, longitude, postalCode, timezone,
+    id, ip, country, region, city, latitude, longitude, postalCode, timezone,
     domains, autonomousSystem, isp, proxy, vpn, tor, dateAdded
   } ) {
+    if ( typeof id === `undefined` )
+      throw new Error( `Must give id` )
+    this.id = id
     if ( typeof ip === `undefined` )
       throw new Error( `Must give IP address` )
     if ( !isIP( ip ) )
@@ -53,7 +56,7 @@ class Location {
    * @returns {Object} The partition key.
    */
   pk() {
-    return variableToItemAttribute( `VISITOR#${ this.ip }` )
+    return variableToItemAttribute( `VISITOR#${ this.id }` )
   }
 
   /**
@@ -61,7 +64,7 @@ class Location {
    */
   key() {
     return {
-      'PK': variableToItemAttribute( `VISITOR#${ this.ip }` ),
+      'PK': variableToItemAttribute( `VISITOR#${ this.id }` ),
       'SK': variableToItemAttribute( `#LOCATION` )
     }
   }
@@ -73,6 +76,7 @@ class Location {
     return {
       ...this.key(),
       'Type': variableToItemAttribute( `location` ),
+      'IP': variableToItemAttribute( this.ip ),
       'Country': variableToItemAttribute( this.country ),
       'Region': variableToItemAttribute( this.region ),
       'City': variableToItemAttribute( this.city ),
@@ -93,7 +97,8 @@ class Location {
 
 const locationFromItem = ( item ) => {
   return new Location( {
-    ip: item.PK.S.split( `#` )[1], 
+    id: item.PK.S.split( `#` )[1], 
+    ip: item.IP.S,
     country: item.Country.S,
     region: item.Region.S, 
     city: item.City.S, 

@@ -1,19 +1,17 @@
-const { parseDate, isIP, variableToItemAttribute } = require( `./utils` )
+const { parseDate, variableToItemAttribute } = require( `./utils` )
 
 class Visit {
   constructor( {
-    date, ip, user, title, slug, sessionStart, timeOnPage = undefined,
+    date, id, user, title, slug, sessionStart, timeOnPage = undefined,
     prevTitle = undefined, prevSlug = undefined, nextTitle = undefined,
     nextSlug = undefined
   } ) {
     if ( typeof date === `undefined` )
       throw new Error( `Must give date of visit` )
     this.date = ( typeof date == `string` ) ? parseDate( date ): date
-    if ( typeof ip === `undefined` )
-      throw new Error( `Must give IP address` )
-    if ( !isIP( ip ) )
-      throw new Error( `Must pass a valid IP address` )
-    this.ip = ip
+    if ( typeof id === `undefined` )
+      throw new Error( `Must give id` )
+    this.id = id
     if ( typeof user === `undefined` )
       throw new Error( `Must give the user of the visit` )
     if ( parseInt( user ) < 0 )
@@ -41,7 +39,7 @@ class Visit {
    * @returns {Object} The partition key.
    */
   pk() {
-    return variableToItemAttribute( `VISITOR#${ this.ip }` )
+    return variableToItemAttribute( `VISITOR#${ this.id }` )
   }
 
   /**
@@ -49,7 +47,7 @@ class Visit {
    */
   key() {
     return {
-      'PK': variableToItemAttribute( `VISITOR#${ this.ip }` ),
+      'PK': variableToItemAttribute( `VISITOR#${ this.id }` ),
       'SK': variableToItemAttribute(
         `VISIT#${ this.date.toISOString() }#${ this.slug }`
       )
@@ -78,7 +76,7 @@ class Visit {
    */
   gsi2pk() {
     return variableToItemAttribute( 
-      `SESSION#${ this.ip }#${ this.sessionStart.toISOString() }` 
+      `SESSION#${ this.id }#${ this.sessionStart.toISOString() }` 
     )
   }
 
@@ -88,7 +86,7 @@ class Visit {
   gsi2() {
     return {
       'GSI2PK': variableToItemAttribute( 
-        `SESSION#${ this.ip }#${ this.sessionStart.toISOString() }` 
+        `SESSION#${ this.id }#${ this.sessionStart.toISOString() }` 
       ),
       'GSI2SK': variableToItemAttribute( `VISIT#${ this.date.toISOString() }` )
     }
@@ -123,7 +121,7 @@ class Visit {
 const visitFromItem = ( item ) => {
   return new Visit( {
     date: item.SK.S.split( `#` )[1], 
-    ip: item.PK.S.split( `#` )[1], 
+    id: item.PK.S.split( `#` )[1], 
     user: item.User.N,
     title: item.Title.S,
     slug: item.Slug.S,

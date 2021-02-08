@@ -1,14 +1,17 @@
-const { isIP } = require( `./utils` )
-
 class Visitor {
+  /**
+   * The visitor constructor.
+   * @param {Object} details The visitor's details.
+   * @param {String} details.id The visitor's unique ID.
+   * @param {Number} details.numberSessions The number of sessions the visitor
+   *   has had with the website.
+   */
   constructor( {
-    ip, numberSessions = 0,
+    id, numberSessions = 0,
   } ) {
-    if ( typeof ip === `undefined` )
-      throw new Error( `Must give IP address` )
-    if ( !isIP( ip ) )
-      throw new Error( `Must pass a valid IP address` )
-    this.ip = ip
+    if ( typeof id === `undefined` )
+      throw new Error( `Must give id` )
+    this.id = id
     if ( isNaN( numberSessions ) )
       throw new Error( `Number of sessions must be a number` )
     if ( parseInt( numberSessions ) < 0 )
@@ -21,7 +24,7 @@ class Visitor {
    */
   pk() {
     return {
-      'S': `VISITOR#${ this.ip }`
+      'S': `VISITOR#${ this.id }`
     }
   }
 
@@ -30,7 +33,7 @@ class Visitor {
    */
   key() {
     return {
-      'PK': { 'S': `VISITOR#${ this.ip }` },
+      'PK': { 'S': `VISITOR#${ this.id }` },
       'SK': { 'S': `#VISITOR` }
     }
   }
@@ -54,7 +57,7 @@ class Visitor {
  */
 const visitorFromItem = ( item ) => {
   return new Visitor( {
-    ip: item.PK.S.split( `#` )[1],
+    id: item.PK.S.split( `#` )[1],
     numberSessions: item.NumberSessions.N
   } )
 }

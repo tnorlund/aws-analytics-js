@@ -53,7 +53,7 @@ const {
 const { addVote, removeVote } = require( `./vote` )
 
 const { 
-  addVisitor, getVisitor,
+  addVisitor, getVisitor, getVisitorDetails,
   incrementNumberSessions, decrementNumberSessions
 } = require( `./visitor` )
 
@@ -93,6 +93,6 @@ module.exports = {
   // Visit
   addVisit, addVisits, getVisit,
   // Visitor
-  addVisitor, getVisitor,
+  addVisitor, getVisitor, getVisitorDetails,
   incrementNumberSessions, decrementNumberSessions
 }
