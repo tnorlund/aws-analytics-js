@@ -2,8 +2,11 @@ const { Session, sessionFromItem } = require( `../` )
 
 /** The unique ID for each visitor */
 const id = `171a0329-f8b2-499c-867d-1942384ddd5f`
+/** The average time spent on each page */
 const avgTime = 10.0
+/** The total time spent on pages */
 const totalTime = 100.0
+/** The date-time the session starts */
 const sessionStart = new Date()
 
 const validSessions = [
