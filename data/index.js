@@ -16,7 +16,7 @@ const {
 } = require( `./comment` )
 
 const {
-  addLocation, getLocation, addLocationFromIP
+  addLocation, getLocation, addLocationFromIP, ipifyRequest
 } = require( `./location` )
 
 const {
@@ -70,7 +70,7 @@ module.exports = {
   incrementNumberCommentVotes, decrementNumberCommentVotes,
   incrementCommentVote, decrementCommentVote,
   // Location
-  addLocation, getLocation, addLocationFromIP,
+  addLocation, getLocation, addLocationFromIP, ipifyRequest,
   // Project
   addProject, getProject, getProjectDetails, updateProject, removeProject,
   incrementNumberProjectFollows, decrementNumberProjectFollows,

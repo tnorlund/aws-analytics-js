@@ -63,31 +63,37 @@ const getLocation = async ( tableName, location ) => {
  * @param {String} ip The IP address of the visitor.
  */
 const addLocationFromIP = async ( tableName, id, ip ) => {
-  ipifyRequest( ip ).then( ( result ) => {
+  const { location, error } = await ipifyRequest( 
+    ip 
+  ).then( async ( result ) => {
     if ( result.statusCode == 200 ) {
       const _location = new Location( { 
         id, ip, 
-        country: result.data.location.country, 
-        region: result.data.location.region,
-        city: result.data.location.city,
-        latitude: result.data.location.lat,
-        longitude: result.data.location.lng,
-        postalCode: result.data.location.postalCode == `` ? 
-          undefined : result.data.location.postalCode,
-        timezone: result.data.location.timezone,
-        domains: result.data.domains ? result.data.domains : undefined,
-        autonomousSystem: result.data.as ? result.data.as : undefined,
-        isp: result.data.isp,
-        proxy: result.data.proxy.proxy,
-        vpn: result.data.proxy.vpn,
-        tor: result.data.proxy.tor,
+        country: result.body.location.country, 
+        region: result.body.location.region,
+        city: result.body.location.city,
+        latitude: result.body.location.lat,
+        longitude: result.body.location.lng,
+        postalCode: result.body.location.postalCode == `` ? 
+          undefined : result.body.location.postalCode,
+        timezone: result.body.location.timezone,
+        domains: result.body.domains ? 
+          result.body.domains : undefined,
+        autonomousSystem: result.body.as ? result.body.as : undefined,
+        isp: result.body.isp,
+        proxy: result.body.proxy.proxy,
+        vpn: result.body.proxy.vpn,
+        tor: result.body.proxy.tor,
         dateAdded: new Date()
       } )
-      const { location, error } = addLocation( tableName, _location )
+      const { location, error } =  await addLocation( tableName, _location )
       if ( error ) return { error }
       return { location }
-    } else return { error: `Could not add location from IP` }
+    } 
+    else return { error: `Could not add location from IP` }
   } )
+  if ( error ) return { error }
+  return { location }
 }
 
 /**
@@ -125,4 +131,4 @@ const ipifyRequest = async ( ip ) => {
   return response
 }
 
-module.exports = { addLocation, getLocation, addLocationFromIP }
+module.exports = { addLocation, getLocation, addLocationFromIP, ipifyRequest }
